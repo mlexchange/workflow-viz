@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+# Allow from callbacks.component import * to import all callbacks
+per-file-ignores =
+    app.py: F401, F403
+max-line-length = 88
+# Compatibility with black formatting, black adds whitespace before a colon
+extend-ignore = E203

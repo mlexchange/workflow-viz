@@ -1,0 +1,9 @@
+plotly 
+pandas
+dash 
+dash-html-components 
+dash-core-components 
+dash-mantine-components
+numpy
+scipy
+dash-iconify
