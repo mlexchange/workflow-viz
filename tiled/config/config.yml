@@ -1,0 +1,29 @@
+# config.yml
+
+file_extensions:
+  edf: application/x-edf
+  cbf: application/x-cbf
+  fits: application/x-fits
+
+trees:
+  - path: /
+    tree: tiled.catalog:from_uri
+    args:
+      uri: $PATH_TO_DATA_CATALOG
+      writable_storage: $PATH_TO_DATA
+      readable_storage: [$PATH_TO_DATA]
+      init_if_not_exists: true
+      adapters_by_mimetype: 
+        application/x-cbf: custom.cbf:read
+        application/x-edf: custom.edf:read
+        application/x-fits: custom.fits:read
+        application/x-gb: custom.gb:read
+        multipart/related;type=application/x-hdf5: custom.lambda_nxs:read_sequence
+
+
+uvicorn:
+  host: 127.0.0.1
+  port: 8888
+
+authentication:
+  allow_anonymous_access: true

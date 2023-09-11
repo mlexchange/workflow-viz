@@ -7,3 +7,7 @@ dash-mantine-components
 numpy
 scipy
 dash-iconify
+python-dotenv
+tiled[all]==0.1.0a106
+h5py
+fabio
