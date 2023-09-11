@@ -7,6 +7,7 @@ COMPONENT_STYLE = {
     "padding": "10px",
     "borderRadius": "5px",
     "overflowY": "auto",
+    "display": "block",
 }
 
 
@@ -50,7 +51,7 @@ def layout():
                                         id="cut-width",
                                         value=5,
                                         min=0,
-                                        max=2000,
+                                        max=10000,
                                         step=1,
                                         size="sm",
                                         labelAlwaysOn=True,
@@ -77,7 +78,7 @@ def layout():
                                         id="cut-height",
                                         value=1000,
                                         min=0,
-                                        max=1000,
+                                        max=10000,
                                         step=1,
                                         size="sm",
                                         labelAlwaysOn=True,
