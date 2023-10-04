@@ -41,14 +41,14 @@ def layout():
                     data=masks_available,
                     value=masks_available[0] if masks_available else None,
                     placeholder="Select a mask...",
-                )
+                ),
             ),
             dmc.Space(h=20),
         ]
     )
 
     return html.Div(
-        id="controls_calibration",
+        id="controls-calibration",
         children=[scan, mask],
         style={
             "display": "block",

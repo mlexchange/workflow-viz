@@ -5,12 +5,13 @@ from dash import Dash, html
 from tiled.client import from_uri
 from tiled.client.cache import Cache
 
-from callbacks.controls import *
+from callbacks.controls_calibration import *
+from callbacks.controls_reduction import *
 from callbacks.progress import *
 from callbacks.reduction import *
 from callbacks.scan import *
-from components.controls import layout as controls_layout
 from components.controls_calibration import layout as controls_calibration_layout
+from components.controls_reduction import layout as controls_reduction_layout
 from components.progress import layout as progress_layout
 from components.reduction import layout as reduction_layout
 from components.scan import layout as scan_layout
@@ -33,7 +34,7 @@ app.layout = dmc.MantineProvider(
                         children=[
                             scan_layout(),
                             controls_calibration_layout(),
-                            controls_layout(),
+                            controls_reduction_layout(),
                         ]
                     ),
                     span=6,
