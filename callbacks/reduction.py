@@ -41,3 +41,15 @@ def update_cut(
     patched_figure["data"][0]["x"] = x_data_cut
     patched_figure["data"][0]["y"] = y_data_cut
     return patched_figure
+
+
+@callback(
+    Output("reduction-container", "style"),
+    Input("progress-stepper", "active"),
+)
+def toggle_controls_reduction_visibility(current_step):
+    step = current_step if current_step is not None else 0
+    if step == 1:
+        return {"display": "block"}
+    else:
+        return {"display": "none"}

@@ -38,6 +38,7 @@ def layout():
     # figure.update_layout(hovermode="y")
 
     return html.Div(
+        id="reduction-container",
         style=COMPONENT_STYLE,
         children=[
             dcc.Graph(id="reduction", figure=figure),
