@@ -13,6 +13,7 @@ COMPONENT_STYLE = {
 
 def layout():
     return html.Div(
+        id="controls-reduction",
         style=COMPONENT_STYLE,
         children=[
             dmc.Center(

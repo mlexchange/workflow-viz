@@ -94,7 +94,7 @@ def layout():
         [
             dmc.Stepper(
                 id="progress-stepper",
-                active=1,
+                active=0,
                 breakpoint="sm",
                 orientation="horizontal",
                 children=steps,

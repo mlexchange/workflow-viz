@@ -32,7 +32,7 @@ app.layout = dmc.MantineProvider(
                     html.Div(
                         children=[
                             scan_layout(),
-                            # controls_calibration_layout(),
+                            controls_calibration_layout(),
                             controls_layout(),
                         ]
                     ),
