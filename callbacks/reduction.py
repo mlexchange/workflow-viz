@@ -9,18 +9,13 @@ from dash import Input, Output, Patch, State, callback
     Input("cut-height", "value"),
     Input("scan", "clickData"),
     Input("cut-direction", "checked"),
-    Input("scan_height", "data"),
-    Input("scan_width", "data"),
+    Input("scan_dims", "data"),
 )
 def update_cut(
-    scan_figure,
-    cut_width,
-    cut_height,
-    click_data,
-    cut_horizontal,
-    scan_height,
-    scan_width,
+    scan_figure, cut_width, cut_height, click_data, cut_horizontal, scan_dims
 ):
+    scan_width = scan_dims["width"]
+    scan_height = scan_dims["height"]
     if click_data is not None:
         x_clicked = click_data["points"][0]["x"]
         y_clicked = click_data["points"][0]["y"]

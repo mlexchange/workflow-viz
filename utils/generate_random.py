@@ -2,6 +2,11 @@ import numpy as np
 from scipy.stats import multivariate_normal as mvn
 
 
+def generate_zeros(width, height):
+    data = np.zeros((height, width))
+    return data
+
+
 def generate_random(width, height):
     np.random.seed(0)
     data = np.random.rand(height, width)

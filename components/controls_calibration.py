@@ -1,6 +1,8 @@
 import dash_mantine_components as dmc
 from dash import html
 
+from utils.data_retrieval import get_mask_options, get_scan_options
+
 
 def layout():
     # beamcenter_x:
@@ -10,10 +12,25 @@ def layout():
     # sample_detector_distance: 5560
     # detector_tilt: 0
     # detector_rotation: 0
-    # mask_path
-    # detector_image_sample
 
-    masks_available = []
+    scans_available = get_scan_options()
+
+    scan = dmc.Grid(
+        children=[
+            dmc.Col(dmc.Text("Scan")),
+            dmc.Col(
+                dmc.Select(
+                    id="scan_uri",
+                    data=scans_available,
+                    value=scans_available[0] if scans_available else None,
+                    placeholder="Select a calibration scan...",
+                )
+            ),
+            dmc.Space(h=20),
+        ]
+    )
+
+    masks_available = get_mask_options()
 
     mask = dmc.Grid(
         children=[
@@ -32,7 +49,7 @@ def layout():
 
     return html.Div(
         id="controls_calibration",
-        children=[mask],
+        children=[scan, mask],
         style={
             "display": "block",
         },

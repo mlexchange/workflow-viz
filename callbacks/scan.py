@@ -1,17 +1,53 @@
+import plotly.express as px
+
+# import plotly.graph_objects as go
 from dash import Input, Output, Patch, callback
+from dash.exceptions import PreventUpdate
 
 from utils.create_shapes import create_rect
+from utils.data_retrieval import get_scan_data
+from utils.generate_random import generate_zeros
 
 
 @callback(
     Output("scan", "figure"),
+    Output("scan_dims", "data"),
+    Input("scan_uri", "value"),
+    Input("mask_uri", "value"),
+)
+def render_scan(scan_uri, mask_uri):
+    if scan_uri:
+        data = get_scan_data(scan_uri)
+        scan_width = data.shape[1]
+        scan_height = data.shape[0]
+    else:
+        scan_width = 1679
+        scan_height = 1475
+        data = generate_zeros(width=scan_width, height=scan_height)
+    figure = px.imshow(
+        data,
+        origin="lower",
+        aspect="equal",
+        color_continuous_scale="viridis",
+        zmax=100,
+    )
+    return figure, {"width": scan_width, "height": scan_height}
+
+
+@callback(
+    Output("scan", "figure", allow_duplicate=True),
     Input("cut-width", "value"),
     Input("cut-height", "value"),
     Input("scan", "clickData"),
-    Input("scan_width", "data"),
-    Input("scan_height", "data"),
+    Input("scan_dims", "data"),
+    Input("progress-stepper", "active"),
+    prevent_initial_call=True,
 )
-def update_cut(cut_width, cut_height, click_data, scan_width, scan_height):
+def update_cut(cut_width, cut_height, click_data, scan_dims, current_step):
+    if current_step != 1:
+        raise PreventUpdate
+    scan_width = scan_dims["width"]
+    scan_height = scan_dims["height"]
     if click_data is not None:
         x_value = click_data["points"][0]["x"]
         y_value = click_data["points"][0]["y"]
