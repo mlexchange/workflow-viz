@@ -165,3 +165,8 @@ cython_debug/
 .DS_Store
 # Windows
 Thumbs.db
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
