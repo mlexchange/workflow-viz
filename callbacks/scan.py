@@ -1,19 +1,20 @@
 import plotly.express as px
+import plotly.graph_objects as go
 
 # import plotly.graph_objects as go
 from dash import Input, Output, Patch, callback
 from dash.exceptions import PreventUpdate
 
 from utils.create_shapes import create_rect
-from utils.data_retrieval import get_scan_data
+from utils.data_retrieval import get_mask_data, get_scan_data
 from utils.generate_random import generate_zeros
 
 
 @callback(
-    Output("scan", "figure"),
-    Output("scan_dims", "data"),
-    Input("scan_uri", "value"),
-    Input("mask_uri", "value"),
+    Output("scan-viewer", "figure"),
+    Output("scan-dims", "data"),
+    Input("scan-uri", "value"),
+    Input("mask-uri", "value"),
 )
 def render_scan(scan_uri, mask_uri):
     if scan_uri:
@@ -31,15 +32,24 @@ def render_scan(scan_uri, mask_uri):
         color_continuous_scale="viridis",
         zmax=100,
     )
+    if mask_uri:
+        mask_data = get_mask_data(
+            mask_uri, scan_height=scan_height, scan_width=scan_width
+        )
+        if mask_data is not None:
+            figure.add_trace(
+                go.Heatmap(z=mask_data, colorscale="Greys", showscale=False)
+            )
+            figure["data"][1]["opacity"] = 1 / 10
     return figure, {"width": scan_width, "height": scan_height}
 
 
 @callback(
-    Output("scan", "figure", allow_duplicate=True),
+    Output("scan-viewer", "figure", allow_duplicate=True),
     Input("cut-width", "value"),
     Input("cut-height", "value"),
-    Input("scan", "clickData"),
-    Input("scan_dims", "data"),
+    Input("scan-viewer", "clickData"),
+    Input("scan-dims", "data"),
     Input("progress-stepper", "active"),
     prevent_initial_call=True,
 )

@@ -8,7 +8,7 @@ numpy==1.26.0
 scipy==1.11.3
 dash-iconify==0.1.2
 python-dotenv==1.0.0
-tiled[all]==0.1.0a106
 h5py==3.9.0
 fabio==2023.6.0
 prefect==2.13.4
+tiled[all]==0.1.0a106

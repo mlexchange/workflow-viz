@@ -1,9 +1,5 @@
-import os
-
 import dash_mantine_components as dmc
-from dash import Dash, html
-from tiled.client import from_uri
-from tiled.client.cache import Cache
+from dash import Dash, dcc, html
 
 from callbacks.controls_calibration import *
 from callbacks.controls_reduction import *
@@ -26,6 +22,8 @@ app.layout = dmc.MantineProvider(
     theme={"colorScheme": "light"},
     children=[
         dmc.Center(progress_layout()),
+        dcc.Store(id="flow-run-id"),
+        dcc.Interval(id="flow-check", interval=5000),
         dmc.Grid(
             # grow=True,
             children=[

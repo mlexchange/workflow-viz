@@ -1,8 +1,6 @@
-import plotly.express as px
+import dash_mantine_components as dmc
+import plotly.graph_objects as go
 from dash import dcc, html
-
-from utils.create_shapes import create_rect
-from utils.generate_random import generate_zeros
 
 COMPONENT_STYLE = {
     #   "width": "800px",
@@ -16,36 +14,29 @@ COMPONENT_STYLE = {
 def layout():
     scan_width = 1679
     scan_height = 1475
-    data = generate_zeros(width=scan_width, height=scan_height)
+    # data = generate_zeros(width=scan_width, height=scan_height)
 
-    figure = px.imshow(
-        data,
-        origin="lower",
-        aspect="equal",
-        color_continuous_scale="viridis",
-        zmax=200,
-    )
-
-    center = (scan_width / 2, scan_height / 2)
-    figure.add_shape(
-        create_rect(
-            center[0],
-            center[1],
-            rect_width=10,
-            rect_height=scan_height,
-            scan_width=scan_width,
-            scan_height=scan_height,
-        )
-    )
-
+    figure = go.Figure(go.Scatter(x=[], y=[]))
+    figure.update_layout(template=None)
+    figure.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
+    figure.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
     figure.update_layout(title="Scan")
 
     return html.Div(
         style=COMPONENT_STYLE,
         children=[
-            dcc.Graph(id="scan", figure=figure),
+            dmc.LoadingOverlay(
+                id="scan-viewer-loading",
+                overlayOpacity=0,
+                loaderProps=dict(
+                    color=dmc.theme.DEFAULT_COLORS["blue"][6], variant="bars"
+                ),
+                children=[
+                    dcc.Graph(id="scan-viewer", figure=figure),
+                ],
+            ),
             dcc.Store(
-                id="scan_dims", data={"width": scan_width, "height": scan_height}
+                id="scan-dims", data={"width": scan_width, "height": scan_height}
             ),
         ],
     )

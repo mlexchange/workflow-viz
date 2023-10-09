@@ -41,6 +41,6 @@ def layout():
         id="reduction-container",
         style=COMPONENT_STYLE,
         children=[
-            dcc.Graph(id="reduction", figure=figure),
+            dcc.Graph(id="reduction-viewer", figure=figure),
         ],
     )
