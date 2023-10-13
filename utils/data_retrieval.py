@@ -85,3 +85,11 @@ def get_mask_data(trimmed_mask_uri, scan_height, scan_width):
     else:
         print("Mask dimensions and scan dimensions don't match.")
         return None
+
+
+def get_reduction_data(trimmed_reduction_uri, index=0):
+    reduction_client = from_uri(
+        TILED_BASE_URI + trimmed_reduction_uri, api_key=TILED_API_KEY
+    )
+
+    return reduction_client["chi"][:], reduction_client["intensity"][:]
