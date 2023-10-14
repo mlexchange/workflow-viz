@@ -5,15 +5,10 @@ from dash import Input, Output, Patch, State, callback
 @callback(
     Output("reduction-viewer", "figure"),
     State("scan-viewer", "figure"),
-    Input("cut-width", "value"),
-    Input("cut-height", "value"),
     Input("scan-viewer", "clickData"),
-    Input("cut-direction", "checked"),
     Input("scan-dims", "data"),
 )
-def update_cut(
-    scan_figure, cut_width, cut_height, click_data, cut_horizontal, scan_dims
-):
+def update_cut(scan_figure, click_data, scan_dims):
     # scan_width = scan_dims["width"]
     # scan_height = scan_dims["height"]
     # if click_data is not None:

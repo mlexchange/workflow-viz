@@ -12,84 +12,95 @@ COMPONENT_STYLE = {
 
 
 def layout():
+    # radial_vs_azimuthal = dmc.Switch()
+    # game-icons:radial-balance
+
+    constrols_integration = dmc.Grid(
+        children=[
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Number of Bins",
+                    description="bins = output points",
+                    id="num_bins_integration",
+                    type="number",
+                    value=1000,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                span=9,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Radial Range Min",
+                    description="in pixel [0, ...]",
+                    id="radial-range-min",
+                    value=0,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Radial Range Max",
+                    description="in pixel [0, ...]",
+                    id="radial-range-max",
+                    value=5000,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Azimuthal Range Min",
+                    description="in degrees [-180,180]",
+                    id="azimuthal-range-min",
+                    value=-180,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=1,
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Azimuthal Range",
+                    description="in degrees [-180,180]",
+                    id="azimuthal-range-max",
+                    value=180,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                ),
+                span=3,
+            ),
+        ]
+    )
+
     return html.Div(
         id="controls-reduction",
         style=COMPONENT_STYLE,
         children=[
+            constrols_integration,
+            dmc.Space(h=20),
             dmc.Center(
-                dmc.Switch(
-                    id="cut-direction",
-                    offLabel=DashIconify(
-                        icon="material-symbols:border-horizontal",
-                        color=dmc.theme.DEFAULT_COLORS["blue"][6],
-                        width=20,
-                    ),
-                    onLabel=DashIconify(
-                        icon="mdi:border-vertical",
-                        width=20,
-                    ),
-                    label="Vertical Cut",
-                    checked=False,
-                    size="lg",
-                )
-            ),
-            dmc.AccordionMultiple(
-                children=[
-                    dmc.AccordionItem(
-                        [
-                            dmc.AccordionControl(
-                                "Width",
-                                icon=DashIconify(
-                                    icon="material-symbols:width",
-                                    color=dmc.theme.DEFAULT_COLORS["blue"][6],
-                                    width=20,
-                                ),
-                            ),
-                            dmc.AccordionPanel(
-                                children=[
-                                    dmc.Space(h=20),
-                                    dmc.Slider(
-                                        id="cut-width",
-                                        value=5,
-                                        min=0,
-                                        max=10000,
-                                        step=1,
-                                        size="sm",
-                                        labelAlwaysOn=True,
-                                    ),
-                                ],
-                            ),
-                        ],
-                        value="width",
-                    ),
-                    dmc.AccordionItem(
-                        [
-                            dmc.AccordionControl(
-                                "Height",
-                                icon=DashIconify(
-                                    icon="material-symbols:height",
-                                    color=dmc.theme.DEFAULT_COLORS["blue"][6],
-                                    width=20,
-                                ),
-                            ),
-                            dmc.AccordionPanel(
-                                children=[
-                                    dmc.Space(h=20),
-                                    dmc.Slider(
-                                        id="cut-height",
-                                        value=1000,
-                                        min=0,
-                                        max=10000,
-                                        step=1,
-                                        size="sm",
-                                        labelAlwaysOn=True,
-                                    ),
-                                ]
-                            ),
-                        ],
-                        value="height",
-                    ),
-                ],
+                dmc.Button(
+                    "Compute Reduction",
+                    id="compute-reduction",
+                    leftIcon=DashIconify(icon="material-symbols:calculate"),
+                ),
             ),
         ],
     )

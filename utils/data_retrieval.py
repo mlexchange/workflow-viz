@@ -87,9 +87,19 @@ def get_mask_data(trimmed_mask_uri, scan_height, scan_width):
         return None
 
 
-def get_reduction_data(trimmed_reduction_uri, index=0):
+def get_reduction_data(trimmed_reduction_uri, output_unit):
     reduction_client = from_uri(
         TILED_BASE_URI + trimmed_reduction_uri, api_key=TILED_API_KEY
     )
 
-    return reduction_client["chi"][:], reduction_client["intensity"][:]
+    if "intensity" not in reduction_client.keys():
+        print("Reduced data is missing 'intensity'.")
+        return None
+    if output_unit not in reduction_client.keys():
+        print(f"Reduced data is missing '{output_unit}'.")
+        return None
+
+    x_data = reduction_client[output_unit][:]
+    y_data = reduction_client["intensity"][:]
+
+    return (x_data, y_data)

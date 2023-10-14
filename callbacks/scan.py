@@ -2,10 +2,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # import plotly.graph_objects as go
-from dash import Input, Output, Patch, callback
+from dash import Input, Output, callback  # Patch
 from dash.exceptions import PreventUpdate
 
-from utils.create_shapes import create_rect
+# from utils.create_shapes import create_rect
 from utils.data_retrieval import get_mask_data, get_scan_data
 from utils.generate_random import generate_zeros
 
@@ -46,33 +46,31 @@ def render_scan(scan_uri, mask_uri):
 
 @callback(
     Output("scan-viewer", "figure", allow_duplicate=True),
-    Input("cut-width", "value"),
-    Input("cut-height", "value"),
     Input("scan-viewer", "clickData"),
     Input("scan-dims", "data"),
     Input("progress-stepper", "active"),
     prevent_initial_call=True,
 )
-def update_cut(cut_width, cut_height, click_data, scan_dims, current_step):
+def update_cut(click_data, scan_dims, current_step):
     if current_step != 1:
         raise PreventUpdate
-    scan_width = scan_dims["width"]
-    scan_height = scan_dims["height"]
-    if click_data is not None:
-        x_value = click_data["points"][0]["x"]
-        y_value = click_data["points"][0]["y"]
-    else:
-        x_value = scan_width / 2
-        y_value = scan_height / 2
-    patched_figure = Patch()
-    patched_figure["layout"]["shapes"][0].update(
-        create_rect(
-            center_x=x_value,
-            center_y=y_value,
-            rect_width=cut_width,
-            rect_height=cut_height,
-            scan_width=scan_width,
-            scan_height=scan_height,
-        )
-    )
-    return patched_figure
+    # scan_width = scan_dims["width"]
+    # scan_height = scan_dims["height"]
+    # if click_data is not None:
+    #    x_value = click_data["points"][0]["x"]
+    #    y_value = click_data["points"][0]["y"]
+    # else:
+    #    x_value = scan_width / 2
+    #    y_value = scan_height / 2
+    # patched_figure = Patch()
+    # patched_figure["layout"]["shapes"][0].update(
+    #    create_rect(
+    #        center_x=x_value,
+    #        center_y=y_value,
+    #        rect_width=cut_width,
+    #        rect_height=cut_height,
+    #        scan_width=scan_width,
+    #        scan_height=scan_height,
+    #    )
+    # )
+    # return patched_figure
