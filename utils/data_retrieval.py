@@ -29,33 +29,31 @@ def get_scan_options():
     """
     # Currently very DESY specific, looking for lmbdp03 and embl_2m
     # and inside of 'raw"
-    scan_uris = []
+    scan_uri_map = dict()
     raw_client = client["raw"]
+
     for node_name in raw_client.keys():
-        node = raw_client[node_name]
-        if "lmbdp03" in node.keys() or "embl_2m" in node.keys():
-            trimmed_uri = trim_base_from_uri(node.uri)
-            trimmed_uri = trimmed_uri.replace("raw/", "")
-            scan_uris.append(trimmed_uri)
+        node_client = raw_client[node_name]
+        for key in node_client:
+            if key == "lmbdp03" or key == "embl_2m":
+                detector_client = node_client[key]
+                for key in detector_client.keys():
+                    scan_uri = trim_base_from_uri(detector_client[key].uri)
+                    trimmed_mask_name = scan_uri.replace("raw/", "")
+                    scan_uri_map[trimmed_mask_name] = scan_uri
 
-    return scan_uris
+    return scan_uri_map
 
 
-def get_scan_data(trimmed_scan_uri, index=0):
+def get_scan_data(trimmed_scan_uri, index=0, downsample_factor=1):
     """
     Returns the data corresponding to the trimmed scan uri
     """
-    raw_client = client["raw"]
-    node = raw_client[trimmed_scan_uri]
-    if "lmbdp03" in node.keys():
-        node = node["lmbdp03"]
-    elif "embl_2m" in node.keys():
-        node = node["embl_2m"]
-    scan = node.values()[0]
+    scan = from_uri(TILED_BASE_URI + trimmed_scan_uri, api_key=TILED_API_KEY)
     if len(scan.shape) == 2:
-        return scan[:]
+        return scan[::downsample_factor, ::downsample_factor]
     else:
-        return scan[index]
+        return scan[index, ::downsample_factor, ::downsample_factor]
 
 
 def get_mask_options():
@@ -67,30 +65,35 @@ def get_mask_options():
     # but they may not be in the future
     raw_client = client["raw"]
     masks = raw_client["masks"]
-    mask_uris = [trim_base_from_uri(masks[mask_name].uri) for mask_name in masks.keys()]
-    return [mask_uri.replace("raw/masks/", "") for mask_uri in mask_uris]
+    mask_uri_mapper = dict()
+    for mask_name in masks.keys():
+        mask_uri = trim_base_from_uri(masks[mask_name].uri)
+        trimmed_mask_name = mask_uri.replace("raw/masks/", "")
+        mask_uri_mapper[trimmed_mask_name] = mask_uri
+    return mask_uri_mapper
 
 
-def get_mask_data(trimmed_mask_uri, scan_height, scan_width):
+def get_mask_data(trimmed_mask_uri, scan_height, scan_width, downsample_factor=1):
     """
     Returns the data corresponding to the trimmed mask uri
     """
-    masks = client["raw"]["masks"]
-    mask = masks[trimmed_mask_uri]
+    mask = from_uri(TILED_BASE_URI + trimmed_mask_uri, api_key=TILED_API_KEY)
     if mask.shape[0] == scan_height and mask.shape[1] == scan_width:
-        return mask[:]
+        return mask[::downsample_factor, ::downsample_factor]
     # Rotated?
     elif mask.shape[0] == scan_width and mask.shape[1] == scan_height:
-        return np.rot90(mask[:])
+        return np.rot90(mask[::downsample_factor, ::downsample_factor])
     else:
         print("Mask dimensions and scan dimensions don't match.")
         return None
 
 
-def get_reduction_data(trimmed_reduction_uri, output_unit):
+def get_reduction_data(trimmed_reduction_uri):
     reduction_client = from_uri(
         TILED_BASE_URI + trimmed_reduction_uri, api_key=TILED_API_KEY
     )
+
+    output_unit = reduction_client.metadata["output_unit"]
 
     if "intensity" not in reduction_client.keys():
         print("Reduced data is missing 'intensity'.")
@@ -102,4 +105,4 @@ def get_reduction_data(trimmed_reduction_uri, output_unit):
     x_data = reduction_client[output_unit][:]
     y_data = reduction_client["intensity"][:]
 
-    return (x_data, y_data)
+    return x_data, y_data, output_unit

@@ -1,42 +1,45 @@
 # import numpy as np
-from dash import Input, Output, Patch, State, callback
+from dash import Input, Output, Patch, State, callback, no_update
+from dash.exceptions import PreventUpdate
+
+from utils.data_retrieval import get_reduction_data
+from utils.prefect import check_status_flow_run
 
 
 @callback(
-    Output("reduction-viewer", "figure"),
-    State("scan-viewer", "figure"),
-    Input("scan-viewer", "clickData"),
-    Input("scan-dims", "data"),
+    Output("reduction-viewer", "figure", allow_duplicate=True),
+    Output("compute-reduction-button", "loading", allow_duplicate=True),
+    Output("prefect-flow-run", "data", allow_duplicate=True),
+    Input("prefect-flow-check", "n_intervals"),
+    State("prefect-flow-run", "data"),
+    prevent_initial_call=True,
 )
-def update_cut(scan_figure, click_data, scan_dims):
-    # scan_width = scan_dims["width"]
-    # scan_height = scan_dims["height"]
-    # if click_data is not None:
-    #    x_clicked = click_data["points"][0]["x"]
-    #    y_clicked = click_data["points"][0]["y"]
-    # else:
-    #    x_clicked = scan_width / 2
-    #    y_clicked = scan_height / 2
-    # x0 = max(0, int(x_clicked - cut_width / 2))
-    # y0 = max(0, int(y_clicked - cut_height / 2))
-    # x1 = min(scan_width - 1, int(x_clicked + cut_width / 2))
-    # y1 = min(scan_height - 1, int(y_clicked + cut_height / 2))
+def check_flow(n_intervals, flow_run_info):
+    empty_flow_run_info = {"id": None, "result_uri": None}
 
-    # Update x and y for the line plot
-    patched_figure = Patch()
+    if flow_run_info["id"]:
+        flow_run_id = flow_run_info["id"]
+        status = check_status_flow_run(flow_run_id)
+        if status == "completed":
+            # Retrieve results and update figure
+            patched_figure = Patch()
+            flow_run_result_uri = flow_run_info["result_uri"]
 
-    return patched_figure
+            x_values, y_values, y_unit = get_reduction_data(
+                flow_run_result_uri,
+            )
 
+            patched_figure["data"][0]["x"] = x_values
+            patched_figure["data"][0]["y"] = y_values
+            patched_figure["data"][0]["xaxis"] = y_unit
 
-# @callback(
-#    Output("output-details", "children", allow_duplicate=True),
-#    Output("submitted-job-id", "data", allow_duplicate=True),
-#    Input("submitted-job-id", "data"),
-#    Input("model-check", "n_intervals"),
-#    prevent_initial_call=True,
-# )
-# def check_flow(job_id, n_intervals):
-#    pass
+            return patched_figure, False, empty_flow_run_info
+        elif status == "failed":
+            return no_update, False, empty_flow_run_info
+        else:
+            return no_update, True, no_update
+    else:
+        raise PreventUpdate
 
 
 @callback(

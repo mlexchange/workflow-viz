@@ -2,6 +2,8 @@ import dash_mantine_components as dmc
 import plotly.graph_objects as go
 from dash import dcc, html
 
+from utils.create_shapes import create_cross
+
 COMPONENT_STYLE = {
     #   "width": "800px",
     #   "height": "calc(60vh - 40px)",
@@ -22,7 +24,15 @@ def layout():
     figure.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
     figure.update_layout(title="Scan")
 
+    horizontal_line, vertical_line = create_cross(
+        scan_width / 2, scan_height / 2, 20, 20, scan_width, scan_height
+    )
+
+    figure.add_shape(horizontal_line)
+    figure.add_shape(vertical_line)
+
     return html.Div(
+        id="scan-container",
         style=COMPONENT_STYLE,
         children=[
             dmc.LoadingOverlay(

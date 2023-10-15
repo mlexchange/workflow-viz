@@ -22,8 +22,8 @@ app.layout = dmc.MantineProvider(
     theme={"colorScheme": "light"},
     children=[
         dmc.Center(progress_layout()),
-        dcc.Store(id="flow-run-id"),
-        dcc.Interval(id="flow-check", interval=5000),
+        dcc.Store(id="prefect-flow-run", data={"id": None, "result_uri": None}),
+        dcc.Interval(id="prefect-flow-check", interval=1000),
         dmc.Grid(
             # grow=True,
             children=[

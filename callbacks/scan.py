@@ -1,38 +1,41 @@
 import plotly.express as px
 import plotly.graph_objects as go
-
-# import plotly.graph_objects as go
-from dash import Input, Output, callback  # Patch
+from dash import Input, Output, Patch, State, callback
 from dash.exceptions import PreventUpdate
 
-# from utils.create_shapes import create_rect
+from utils.create_shapes import create_cross
 from utils.data_retrieval import get_mask_data, get_scan_data
-from utils.generate_random import generate_zeros
 
 
 @callback(
-    Output("scan-viewer", "figure"),
+    Output("scan-viewer", "figure", allow_duplicate=True),
     Output("scan-dims", "data"),
-    Input("scan-uri", "value"),
-    Input("mask-uri", "value"),
+    Input("scan-name", "value"),
+    Input("mask-name", "value"),
+    State("scan-name-uri-map", "data"),
+    State("mask-name-uri-map", "data"),
+    prevent_initial_call=True,
 )
-def render_scan(scan_uri, mask_uri):
-    if scan_uri:
-        data = get_scan_data(scan_uri)
-        scan_width = data.shape[1]
-        scan_height = data.shape[0]
+def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
+    if scan_name:
+        scan_uri = scan_name_uri_map[scan_name]
+        scan_data = get_scan_data(scan_uri)
+        scan_width = scan_data.shape[1]
+        scan_height = scan_data.shape[0]
+        figure = px.imshow(
+            scan_data,
+            origin="lower",
+            aspect="equal",
+            color_continuous_scale="viridis",
+            zmax=100,
+        )
     else:
         scan_width = 1679
         scan_height = 1475
-        data = generate_zeros(width=scan_width, height=scan_height)
-    figure = px.imshow(
-        data,
-        origin="lower",
-        aspect="equal",
-        color_continuous_scale="viridis",
-        zmax=100,
-    )
-    if mask_uri:
+        # data = generate_zeros(width=scan_width, height=scan_height)
+        figure = go.Figure(go.Scatter(x=[], y=[]))
+    if mask_name:
+        mask_uri = mask_name_uri_map[mask_name]
         mask_data = get_mask_data(
             mask_uri, scan_height=scan_height, scan_width=scan_width
         )
@@ -46,31 +49,34 @@ def render_scan(scan_uri, mask_uri):
 
 @callback(
     Output("scan-viewer", "figure", allow_duplicate=True),
+    Output("beamcenter_x", "value"),
+    Output("beamcenter_y", "value"),
     Input("scan-viewer", "clickData"),
-    Input("scan-dims", "data"),
-    Input("progress-stepper", "active"),
+    State("scan-dims", "data"),
+    State("progress-stepper", "active"),
     prevent_initial_call=True,
 )
-def update_cut(click_data, scan_dims, current_step):
+def handle_click(
+    click_data,
+    current_step,
+    scan_dims,
+):
     if current_step != 1:
         raise PreventUpdate
-    # scan_width = scan_dims["width"]
-    # scan_height = scan_dims["height"]
-    # if click_data is not None:
-    #    x_value = click_data["points"][0]["x"]
-    #    y_value = click_data["points"][0]["y"]
-    # else:
-    #    x_value = scan_width / 2
-    #    y_value = scan_height / 2
-    # patched_figure = Patch()
-    # patched_figure["layout"]["shapes"][0].update(
-    #    create_rect(
-    #        center_x=x_value,
-    #        center_y=y_value,
-    #        rect_width=cut_width,
-    #        rect_height=cut_height,
-    #        scan_width=scan_width,
-    #        scan_height=scan_height,
-    #    )
-    # )
-    # return patched_figure
+    scan_width = scan_dims["width"]
+    scan_height = scan_dims["height"]
+    if click_data is not None:
+        x_value = click_data["points"][0]["x"]
+        y_value = click_data["points"][0]["y"]
+    else:
+        x_value = scan_width / 2
+        y_value = scan_height / 2
+    patched_figure = Patch()
+
+    horizontal_line, vertical_line = create_cross(
+        x_value, y_value, 20, 20, scan_width, scan_height
+    )
+    patched_figure["layout"]["shapes"][0].update(horizontal_line)
+    patched_figure["layout"]["shapes"][0].update(vertical_line)
+
+    return patched_figure, x_value, y_value

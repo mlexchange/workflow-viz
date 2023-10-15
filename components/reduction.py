@@ -28,10 +28,8 @@ def layout():
             spikecolor="#999999",
             spikemode="across",
         ),
-        yaxis=dict(title="mean intensity", linecolor="#BCCCDC"),
+        yaxis=dict(title="intensity", linecolor="#BCCCDC"),
     )
-
-    # figure = px.line(markers=False)
 
     figure = go.Figure(data=go.Scatter(), layout=figure_layout)
     figure.update_traces(line_color="#1f78b4")

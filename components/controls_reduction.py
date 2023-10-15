@@ -21,7 +21,7 @@ def layout():
                 dmc.NumberInput(
                     label="Number of Bins",
                     description="bins = output points",
-                    id="num_bins_integration",
+                    id="num-bins-integration",
                     type="number",
                     value=1000,
                     precision=0,
@@ -98,7 +98,7 @@ def layout():
             dmc.Center(
                 dmc.Button(
                     "Compute Reduction",
-                    id="compute-reduction",
+                    id="compute-reduction-button",
                     leftIcon=DashIconify(icon="material-symbols:calculate"),
                 ),
             ),
