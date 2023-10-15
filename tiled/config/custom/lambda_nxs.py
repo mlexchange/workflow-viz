@@ -152,6 +152,6 @@ def read_sequence(*filepaths, metadata=None, **kwargs):
             dataset[md], dtype=np.float32
         )
 
-    array = np.flipud(np.rot90(myimage))
+    array = myimage
 
     return ArrayAdapter.from_array(array, metadata=metadata)
