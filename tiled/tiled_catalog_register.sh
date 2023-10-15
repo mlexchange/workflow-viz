@@ -18,6 +18,7 @@ fi
 ## Will overwrite
 if [ -d "$PATH_TO_DATA_DESY" ]; then
      tiled catalog register $PATH_TO_DATA_CATALOG --verbose \
+            --watch \
             --prefix "/"  \
            --ext '.cbf=application/x-cbf' \
            --adapter 'application/x-cbf=custom.cbf:read' \

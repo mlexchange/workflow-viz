@@ -9,9 +9,10 @@ trees:
   - path: /
     tree: tiled.catalog:from_uri
     args:
-      uri: $PATH_TO_DATA_CATALOG
-      writable_storage: $PATH_TO_DATA
-      readable_storage: [$PATH_TO_DATA]
+      uri: ./tiled/db/catalog.db #$PATH_TO_DATA_CATALOG
+      writable_storage: /Users/wiebke/Documents/Data/saxs-waxs-samples/desy/
+      readable_storage: [/Users/wiebke/Documents/Data/saxs-waxs-samples/desy]
+      #[$PATH_TO_DATA_ALS, $PATH_TO_DATA_DESY]
       init_if_not_exists: true
       adapters_by_mimetype: 
         application/x-cbf: custom.cbf:read
@@ -26,4 +27,5 @@ uvicorn:
   port: 8888
 
 authentication:
+  # For local testing allow anonymous access
   allow_anonymous_access: true
