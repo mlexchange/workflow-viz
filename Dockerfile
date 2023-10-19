@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the remainder of the code into the image
 COPY . ./
 
-EXPOSE 8085
+EXPOSE 8095
+EXPOSE 8888
 
-# Better than the alternative running of app.py directly with
 CMD ["python", "app.py"]

@@ -4,8 +4,6 @@ from dash import Input, Output, State, callback
 
 from utils.prefect import get_full_deployment_names, schedule_prefect_flow
 
-REDUCTION_FLOWS = asyncio.run(get_full_deployment_names())
-
 
 @callback(
     Output("prefect-flow-run", "data"),
@@ -48,7 +46,8 @@ def submit_reduction_to_compute(
             "output_unit": "q",  # "q"
         }
         flow_name = "integration-azimuthal"
-        deployment_name = REDUCTION_FLOWS[flow_name]
+        reduction_flows = asyncio.run(get_full_deployment_names())
+        deployment_name = reduction_flows[flow_name]
         flow_run_id = schedule_prefect_flow(deployment_name, parameters)
 
         result_uri = scan_uri.replace("raw/", "/processed/")

@@ -10,8 +10,8 @@ trees:
     tree: tiled.catalog:from_uri
     args:
       uri: $PATH_TO_DATA_CATALOG #./tiled/db/catalog.db
-      writable_storage: $PATH_TO_DATA_DESY
-      readable_storage: [$PATH_TO_DATA_DESY]
+      writable_storage: /data
+      readable_storage: [/data]
       #[/Users/wiebke/Documents/Data/saxs-waxs-samples/desy]
       init_if_not_exists: true
       adapters_by_mimetype: 
@@ -23,9 +23,11 @@ trees:
 
 
 uvicorn:
-  host: 127.0.0.1
+  host: 0.0.0.0
   port: 8888
+
 
 authentication:
   # For local testing allow anonymous access
   allow_anonymous_access: true
+  single_user_api_key: ${TILED_API_KEY}

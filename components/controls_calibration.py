@@ -6,44 +6,54 @@ from utils.data_retrieval import get_mask_options, get_scan_options
 
 def layout():
     scans_available = get_scan_options()
+    masks_available = get_mask_options()
 
-    scan = dmc.Grid(
+    scan_mask_selection = dmc.Grid(
         children=[
-            dmc.Col(dmc.Text("Scan")),
             dmc.Col(
                 dmc.Select(
+                    label="Scan",
                     id="scan-name",
                     data=list(scans_available.keys()),
                     value=None,
                     placeholder="Select a calibration scan...",
-                )
+                ),
+                span=12,
             ),
-            dcc.Store(id="scan-name-uri-map", data=scans_available),
-            dmc.Space(h=20),
-        ]
-    )
-
-    masks_available = get_mask_options()
-
-    mask = dmc.Grid(
-        children=[
-            dmc.Col(dmc.Text("Mask")),
             dmc.Col(
                 dmc.Select(
+                    label="Experiment",
+                    id="experiment-type",
+                    data=["SAXS", "WAXS", "GISAXS", "GIWAXS"],
+                    value=None,
+                    placeholder="Select experiment type...",
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.Select(
+                    label="Mask",
                     id="mask-name",
                     data=list(masks_available.keys()),
                     value=None,
                     placeholder="Select a mask...",
                 ),
+                span=9,
             ),
+            dcc.Store(id="scan-name-uri-map", data=scans_available),
             dcc.Store(id="mask-name-uri-map", data=masks_available),
+            dmc.Space(h=20),
+        ]
+    )
+
+    experiment_type = dmc.Grid(
+        children=[
             dmc.Space(h=20),
         ]
     )
 
     calibration_values = dmc.Grid(
         children=[
-            dmc.Col(dmc.Text("Calibration Values")),
             dmc.Col(
                 dmc.NumberInput(
                     label="Beam Center X",
@@ -94,6 +104,7 @@ def layout():
                     size="sm",
                     stepHoldDelay=500,
                     stepHoldInterval=1,
+                    disabled=True,
                 ),
                 span=3,
             ),
@@ -112,9 +123,9 @@ def layout():
             ),
             dmc.Col(
                 dmc.NumberInput(
-                    label="Sample Detector Distance",
+                    label="Detector Distance",
                     description="in millimeter",
-                    id="sample_detector_dist",
+                    id="sample-detector-dist",
                     value=0,
                     precision=5,
                     size="sm",
@@ -155,7 +166,7 @@ def layout():
 
     return html.Div(
         id="controls-calibration",
-        children=[scan, mask, calibration_values],
+        children=[experiment_type, scan_mask_selection, calibration_values],
         style={
             "display": "block",
         },

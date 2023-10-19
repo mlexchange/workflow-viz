@@ -1,32 +1,34 @@
 # docker-compose.yml
 
-version: "3.9"
+version: "3"
 services:
   tiled:
     container_name: tiled_workflow_server
     build: .
-    command: bash -c "/tiled/tiled_config_serve.sh"
+    command: bash -c "/app/tiled/tiled_config_serve.sh"
     volumes:
-      - ./tiled:/tiled
+      - ./tiled:/app/tiled
+      - ${PATH_TO_DATA_DESY}:/data
     environment:
       TILED_API_KEY: ${TILED_API_KEY}
+      PATH_TO_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
     depends_on:
       - tiled-watch
+    ports:
+      - '8888:8888'
     networks:
       - workflow_viz_default
 
   tiled-watch:
     container_name: tiled_workflow_watcher
     build: .
-    command: bash -c "/tiled/tiled_catalog_register.sh"
+    command: bash -c "/app/tiled/tiled_catalog_register.sh"
     volumes:
-      - ./tiled:/tiled
+      - ./tiled:/app/tiled
       - ${PATH_TO_DATA_DESY}:/data
     environment:
-      TILED_API_KEY: ${TILED_API_KEY}
-      TILED_URI: "http://tiled:8888"
       PATH_TO_DATA_DESY: "/data"
-      PATH_TO_DATA_CATALOG: "/tiled/db/catalog.db"
+      PATH_TO_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
     networks:
       - workflow_viz_default
 
@@ -44,7 +46,9 @@ services:
       - ./components:/app/components
       - ./utils:/app/utils
     ports:
-      - '8075:8075'
+      - '8095:8095'
+    depends_on:
+      - tiled
     networks:
       - workflow_viz_default
 
