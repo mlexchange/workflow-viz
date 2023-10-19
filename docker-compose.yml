@@ -1,0 +1,53 @@
+# docker-compose.yml
+
+version: "3.9"
+services:
+  tiled:
+    container_name: tiled_workflow_server
+    build: .
+    command: bash -c "/tiled/tiled_config_serve.sh"
+    volumes:
+      - ./tiled:/tiled
+    environment:
+      TILED_API_KEY: ${TILED_API_KEY}
+    depends_on:
+      - tiled-watch
+    networks:
+      - workflow_viz_default
+
+  tiled-watch:
+    container_name: tiled_workflow_watcher
+    build: .
+    command: bash -c "/tiled/tiled_catalog_register.sh"
+    volumes:
+      - ./tiled:/tiled
+      - ${PATH_TO_DATA_DESY}:/data
+    environment:
+      TILED_API_KEY: ${TILED_API_KEY}
+      TILED_URI: "http://tiled:8888"
+      PATH_TO_DATA_DESY: "/data"
+      PATH_TO_DATA_CATALOG: "/tiled/db/catalog.db"
+    networks:
+      - workflow_viz_default
+
+  workflow-viz:
+    container_name: workflow_viz
+    build: .
+    command: 'python app.py'
+    environment:
+      TILED_API_KEY: ${TILED_API_KEY}
+      TILED_URI: "http://tiled:8888"
+      PREFECT_API_URL: "http://prefect-server:4200/api"
+    volumes:
+      - ./app.py:/app/app.py
+      - ./callbacks:/app/callbacks
+      - ./components:/app/components
+      - ./utils:/app/utils
+    ports:
+      - '8075:8075'
+    networks:
+      - workflow_viz_default
+
+networks:
+  workflow_viz_default:
+    external: true

@@ -9,10 +9,10 @@ trees:
   - path: /
     tree: tiled.catalog:from_uri
     args:
-      uri: ./tiled/db/catalog.db #$PATH_TO_DATA_CATALOG
-      writable_storage: /Users/wiebke/Documents/Data/saxs-waxs-samples/desy/
-      readable_storage: [/Users/wiebke/Documents/Data/saxs-waxs-samples/desy]
-      #[$PATH_TO_DATA_ALS, $PATH_TO_DATA_DESY]
+      uri: $PATH_TO_DATA_CATALOG #./tiled/db/catalog.db
+      writable_storage: $PATH_TO_DATA_DESY
+      readable_storage: [$PATH_TO_DATA_DESY]
+      #[/Users/wiebke/Documents/Data/saxs-waxs-samples/desy]
       init_if_not_exists: true
       adapters_by_mimetype: 
         application/x-cbf: custom.cbf:read
