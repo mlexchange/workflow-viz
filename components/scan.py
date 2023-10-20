@@ -12,17 +12,25 @@ COMPONENT_STYLE = {
     "overflowY": "auto",
 }
 
+SCAN_FIGURE_CONFIG = {"displayModeBar": False}
+SCAN_FIGURE_LAYOUT = go.Layout(
+    # title=dict(text="Scan", automargin=True, yref="container"),
+    plot_bgcolor="#FFFFFF",
+    xaxis=dict(
+        title="pixel",
+        linecolor="#BCCCDC",
+    ),
+    yaxis=dict(title="pixel", linecolor="#BCCCDC"),
+    margin={"b": 10, "t": 25},
+)
+
 
 def layout():
     scan_width = 1679
     scan_height = 1475
     # data = generate_zeros(width=scan_width, height=scan_height)
 
-    figure = go.Figure(go.Scatter(x=[], y=[]))
-    figure.update_layout(template=None)
-    figure.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
-    figure.update_yaxes(showgrid=False, showticklabels=False, zeroline=False)
-    figure.update_layout(title="Scan")
+    figure = go.Figure(go.Scatter(x=[], y=[]), layout=SCAN_FIGURE_LAYOUT)
 
     horizontal_line, vertical_line = create_cross(
         scan_width / 2, scan_height / 2, 20, 20, scan_width, scan_height
@@ -35,6 +43,7 @@ def layout():
         id="scan-container",
         style=COMPONENT_STYLE,
         children=[
+            dmc.Center(children=dmc.Text("Scan", weight=500, size="lg")),
             dmc.LoadingOverlay(
                 id="scan-viewer-loading",
                 overlayOpacity=0,
@@ -42,7 +51,9 @@ def layout():
                     color=dmc.theme.DEFAULT_COLORS["blue"][6], variant="bars"
                 ),
                 children=[
-                    dcc.Graph(id="scan-viewer", figure=figure),
+                    dcc.Graph(
+                        id="scan-viewer", figure=figure, config=SCAN_FIGURE_CONFIG
+                    ),
                 ],
             ),
             dcc.Store(

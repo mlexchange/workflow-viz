@@ -1,8 +1,9 @@
-import plotly.express as px
+# import plotly.express as px
 import plotly.graph_objects as go
 from dash import Input, Output, Patch, State, callback
 from dash.exceptions import PreventUpdate
 
+from components.scan import SCAN_FIGURE_LAYOUT
 from utils.create_shapes import create_cross
 from utils.data_retrieval import get_mask_data, get_scan_data
 
@@ -22,13 +23,8 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
         scan_data = get_scan_data(scan_uri)
         scan_width = scan_data.shape[1]
         scan_height = scan_data.shape[0]
-        figure = px.imshow(
-            scan_data,
-            origin="lower",
-            aspect="equal",
-            color_continuous_scale="viridis",
-            zmax=100,
-        )
+        scan = go.Heatmap(z=scan_data, colorscale="viridis", zmax=100, zauto=False)
+        figure = go.Figure(data=scan, layout=SCAN_FIGURE_LAYOUT)
     else:
         scan_width = 1679
         scan_height = 1475
@@ -44,13 +40,14 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
                 go.Heatmap(z=mask_data, colorscale="Greys", showscale=False)
             )
             figure["data"][1]["opacity"] = 1 / 10
+
     return figure, {"width": scan_width, "height": scan_height}
 
 
 @callback(
     Output("scan-viewer", "figure", allow_duplicate=True),
-    Output("beamcenter_x", "value"),
-    Output("beamcenter_y", "value"),
+    Output("beamcenter-x", "value"),
+    Output("beamcenter-y", "value"),
     Input("scan-viewer", "clickData"),
     State("scan-dims", "data"),
     State("progress-stepper", "active"),
@@ -74,7 +71,7 @@ def handle_click(
     patched_figure = Patch()
 
     horizontal_line, vertical_line = create_cross(
-        x_value, y_value, 20, 20, scan_width, scan_height
+        x_value, y_value, 200, 200, scan_width, scan_height
     )
     patched_figure["layout"]["shapes"][0].update(horizontal_line)
     patched_figure["layout"]["shapes"][0].update(vertical_line)

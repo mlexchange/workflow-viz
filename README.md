@@ -10,6 +10,12 @@ source workflow-viz-env/bin/activate
 pip install -r requirements.txt
 ```
 
+# Initial setup with Docker: 
+
+```bash
+docker network create workflow_viz_default
+```
+
 # Set correct paths
 
 In a file `.env`, set the following variables and adapt the path 

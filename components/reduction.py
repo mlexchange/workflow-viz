@@ -1,3 +1,4 @@
+import dash_mantine_components as dmc
 import plotly.graph_objects as go
 from dash import dcc, html
 
@@ -9,10 +10,12 @@ COMPONENT_STYLE = {
     "overflowY": "auto",
 }
 
+REDUCTION_FIGURE_CONFIG = {"displayModeBar": False}
+
 
 def layout():
     figure_layout = go.Layout(
-        title="Step Preview",
+        # title=dict(text="Step Preview", automargin=True, yref="paper"),
         plot_bgcolor="#FFFFFF",
         hovermode="x",
         hoverdistance=100,  # Distance to show hover label of data point
@@ -29,6 +32,7 @@ def layout():
             spikemode="across",
         ),
         yaxis=dict(title="intensity", linecolor="#BCCCDC"),
+        margin={"b": 10, "t": 20},
     )
 
     figure = go.Figure(data=go.Scatter(), layout=figure_layout)
@@ -39,6 +43,9 @@ def layout():
         id="reduction-container",
         style=COMPONENT_STYLE,
         children=[
-            dcc.Graph(id="reduction-viewer", figure=figure),
+            dmc.Center(children=dmc.Text("Reduction", weight=500, size="lg")),
+            dcc.Graph(
+                id="reduction-viewer", figure=figure, config=REDUCTION_FIGURE_CONFIG
+            ),
         ],
     )

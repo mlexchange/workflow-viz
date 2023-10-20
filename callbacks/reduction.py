@@ -25,13 +25,13 @@ def check_flow(n_intervals, flow_run_info):
             patched_figure = Patch()
             flow_run_result_uri = flow_run_info["result_uri"]
 
-            x_values, y_values, y_unit = get_reduction_data(
+            x_values, y_values, x_unit = get_reduction_data(
                 flow_run_result_uri,
             )
 
             patched_figure["data"][0]["x"] = x_values
             patched_figure["data"][0]["y"] = y_values
-            patched_figure["data"][0]["xaxis"] = y_unit
+            patched_figure["layout"]["xaxis"]["title"] = x_unit
 
             return patched_figure, False, empty_flow_run_info
         elif status == "failed":
