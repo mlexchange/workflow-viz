@@ -58,7 +58,7 @@ def layout():
                 dmc.NumberInput(
                     label="Beam Center X",
                     description="in pixel",
-                    id="beamcenter_x",
+                    id="beamcenter-x",
                     type="number",
                     value=0,
                     precision=3,
@@ -72,7 +72,7 @@ def layout():
                 dmc.NumberInput(
                     label="Beam Center Y",
                     description="in pixel",
-                    id="beamcenter_y",
+                    id="beamcenter-y",
                     value=0,
                     precision=3,
                     size="sm",
