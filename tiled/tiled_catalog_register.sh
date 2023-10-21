@@ -2,6 +2,7 @@
 source .env
 echo $PWD
 export PYTHONPATH="$PYTHONPATH:$PWD/tiled/config/"
+echo $PYTHONPATH
 echo $PATH_TO_DATA_CATALOG
 if [ ! -f "$PATH_TO_DATA_CATALOG" ]; then
     tiled catalog init "$PATH_TO_DATA_CATALOG"
@@ -13,7 +14,7 @@ if [ -d "$PATH_TO_DATA_ALS" ]; then
             --adapter 'application/x-edf=custom.edf:read' \
             "$PATH_TO_DATA_ALS"
 else
-    echo "The directory $PATH_TO_DATA_ALS does not exist."
+    echo "The directory for ALS ($PATH_TO_DATA_ALS) does not exist."
 fi
 ## Will overwrite
 if [ -d "$PATH_TO_DATA_DESY" ]; then
