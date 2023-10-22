@@ -2,6 +2,7 @@ import collections
 import logging
 import os
 import re
+from logging import StreamHandler
 
 import h5py
 import numpy as np
@@ -11,6 +12,8 @@ from tiled.catalog.utils import ensure_uri
 from tiled.server.schemas import Asset, DataSource, Management
 
 logger = logging.getLogger("tiled.adapters.lambda_nxs")
+logger.addHandler(StreamHandler())
+logger.setLevel("INFO")
 
 # Matches filename with (optional) non-digits \D followed by digits \d _m,
 # then digits \d and then the file extension .nxs

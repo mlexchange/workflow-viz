@@ -3,12 +3,13 @@
 version: "3"
 services:
   tiled:
+    image: workflow_viz
     container_name: tiled_workflow_server
-    build: .
     command: bash -c "/app/tiled/tiled_config_serve.sh"
     volumes:
       - ./tiled:/app/tiled
       #- desy-drive:/data
+      - .env:/app/.env
       - ${PATH_TO_DATA_DESY}:/data
     environment:
       TILED_API_KEY: ${TILED_API_KEY}
@@ -21,12 +22,15 @@ services:
       - workflow_viz_default
 
   tiled-watch:
-    container_name: tiled_workflow_watcher
+    image: workflow_viz
+    # build this one, have the other depend on it
     build: .
+    container_name: tiled_workflow_watcher
     command: bash -c "/app/tiled/tiled_catalog_register.sh"
     volumes:
       - ./tiled:/app/tiled
       #- desy-drive:/data
+      - .env:/app/.env
       - ${PATH_TO_DATA_DESY}:/data
     environment:
       PATH_TO_DATA_DESY: "/data"
@@ -35,8 +39,8 @@ services:
       - workflow_viz_default
 
   workflow-viz:
+    image: workflow_viz
     container_name: workflow_viz
-    build: .
     command: 'python app.py'
     environment:
       TILED_API_KEY: ${TILED_API_KEY}
@@ -57,15 +61,14 @@ services:
 networks:
   workflow_viz_default:
     external: true
-    
-#volumes:
-  #desy-drive:
+    #volumes:
+    #desy-drive:
     #driver: local
     #driver_opts:
-      #type: cifs
-      # With full address
-      #o: addr=****.desy.de,username=*******,password=*******,vers=3.0
-      #device: //***.desy.de/**********/p03/2023/data\*******
-      # With ip address
-      #o: username=*******,password=*******,vers=3.0
-      #device: //***.***.***.***/**********/p03/2023/data/*******
+    #type: cifs
+    # With full address
+    #o: addr=****.desy.de,username=*******,password=*******,vers=3.0
+    #device: //***.desy.de/**********/p03/2023/data\*******
+    # With ip address
+    #o: username=*******,password=*******,vers=3.0
+    #device: //***.***.***.***/**********/p03/2023/data/*******
