@@ -7,6 +7,7 @@ Clone the repository:
 ```bash
 git clone git@github.com:als-computing/workflow-viz.git
 cd workflow-viz
+```
 
 Setup an environment, with venv:
 
@@ -35,6 +36,8 @@ In a file `.env`, set the following variables and adapt the path
 ```bash
 TILED_URI="http://127.0.0.1:8888"
 TILED_API_KEY="<randomly generated key>"
+TILED_WHITELIST="<comma seperated list of file or directory names to process>"
+TILED_BLACKLIST="<comma seperated list of file or directory names to ignore>"
 PREFECT_API_URL="http://127.0.0.1:4200/api"
 PATH_TO_DATA_ALS="<path to folder>"
 PATH_TO_DATA_DESY="<path to folder that has structure as beamtime (with subfolders /raw, /processed/ ...)>"
@@ -44,6 +47,10 @@ PATH_TO_DATA_CATALOG="./tiled/db/catalog.db"
 Either `PATH_TO_DATA_ALS` or `PATH_TO_DATA_DESY` can be omitted, but must match with the `PATH_TO_DATA` path in the `SAXSWAXS-workflows` environment.
 
 Additionally, the `TILED_API_KEY` needs to be the same.
+
+If `TILED_WHITELIST` is empty, no files/directories will be skipped, but if it is not one needs to specify all names to be whitelisted (including top-level directory names, e.g. `"raw, processed, <beamtimeid>"`).
+
+If `TILED_WHITELIST` is empty, no files/directories will be skipped, but if it is not one needs to specify all names to be whitelisted (including top-level directory names, e.g. `"raw, processed, <beamtimeid>"`).
 
 ## Beamtime setup: Start up a Tiled
 

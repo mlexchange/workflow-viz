@@ -23,6 +23,8 @@ if [ -d "$PATH_TO_DATA_DESY" ]; then
             --prefix "/"  \
            --ext '.cbf=application/x-cbf' \
            --adapter 'application/x-cbf=custom.cbf:read' \
+           --walker 'custom.blacklist:walk' \
+           --walker 'custom.whitelist:walk' \
             --walker 'custom.lambda_nxs:walk' \
             --adapter 'multipart/related;type=application/x-hdf5=custom.lambda_nxs:read_sequence' \
             "$PATH_TO_DATA_DESY"
