@@ -6,7 +6,7 @@ if (Test-Path $EnvFile){
     # Match any line with KEY=value pattern that does not start with # (using negative lookahead)
         if ($_ -match "^(?!#)([^=]+)=(.+)") {
             $key = $matches[1]
-            $value = $matches[2]
+            $value = $matches[2].Replace('"','')
             Write-Host "Setting environment variable $key to $value"
             Set-Content "Env:$key" $value
         }

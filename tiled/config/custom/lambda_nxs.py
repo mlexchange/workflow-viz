@@ -57,14 +57,27 @@ async def walk(
     mimetype = "multipart/related;type=application/x-hdf5"
     for name, sequence in sorted(sequences.items()):
         # Skip sequences that do not have exactly 11 files
-        # corresponding to the 11 modules of
+        # corresponding to the 11 modules of the detector
         if len(sequence) != 11:
             logger.info(
                 "    SKIPPED: Did not group %d Nexus files into a sequence '%s' since"
-                + " the number of files does not match a lambda detector",
+                + " the number of files does not match a lambda detector.",
                 len(sequence),
                 name,
             )
+            unhandled_files.extend(sequence)
+            continue
+        dataset_path = "entry/instrument/detector/data"
+        # Open one file and check if there is any data
+        module = h5py.File(os.path.join(sequence[0]), "r")
+        if (len(module.get(dataset_path)) < 1):
+            logger.info(
+                "    SKIPPED: Did not group %d Nexus files into a sequence '%s' since"
+                + " they do not contain any data.",
+                len(sequence),
+                name,
+            )
+            unhandled_files.extend(sequence)
             continue
         logger.info(
             "    Grouped %d Nexus files into a sequence '%s'", len(sequence), name
