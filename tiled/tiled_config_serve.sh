@@ -1,5 +1,11 @@
 #!/bin/sh
+# Export environment variables to this shell
+set -o allexport
 source .env
+set +o allexport
 export PYTHONPATH="$PYTHONPATH:$PWD/tiled/config/"
 export TILED_SINGLE_USER_API_KEY=$TILED_API_KEY
-tiled serve config ./tiled/config/config.yml
+
+# Replace environment variables in config.yml
+envsubst < ./tiled/config/config.yml > ./tiled/config/config_tmp.yml
+tiled serve config ./tiled/config/config_tmp.yml
