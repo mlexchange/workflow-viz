@@ -22,10 +22,10 @@ def parse_txt_accompanying_edf(filepath):
     if isinstance(filepath, pathlib.Path):
         txt_filepath = filepath.with_suffix(".txt")
 
+    metadata = dict()
     if os.path.isfile(txt_filepath):
         # TODO: Fill meta data with
         print("Parsing txt")
-        metadata = dict()
     return metadata
 
 

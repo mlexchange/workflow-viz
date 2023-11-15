@@ -6,13 +6,24 @@ file_extensions:
   fits: application/x-fits
 
 trees:
-  - path: /
+  - path: /raw
     tree: tiled.catalog:from_uri
     args:
-      uri: $PATH_TO_DATA_CATALOG
-      writable_storage: $PATH_TO_DATA_DESY
-      readable_storage: [$PATH_TO_DATA_DESY]
-      #[/Users/wiebke/Documents/Data/saxs-waxs-samples/desy]
+      uri: $PATH_TO_RAW_DATA_CATALOG
+      readable_storage: [$PATH_TO_RAW_DATA]
+      init_if_not_exists: true
+      adapters_by_mimetype: 
+        application/x-cbf: custom.cbf:read
+        application/x-edf: custom.edf:read
+        application/x-fits: custom.fits:read
+        application/x-gb: custom.gb:read
+        multipart/related;type=application/x-hdf5: custom.lambda_nxs:read_sequence
+  - path: /processed
+    tree: tiled.catalog:from_uri
+    args:
+      uri: $PATH_TO_PROCESSED_DATA_CATALOG
+      writable_storage: $PATH_TO_PROCESSED_DATA
+      readable_storage: [$PATH_TO_PROCESSED_DATA]
       init_if_not_exists: true
       adapters_by_mimetype: 
         application/x-cbf: custom.cbf:read
@@ -30,4 +41,4 @@ uvicorn:
 authentication:
   # For local testing allow anonymous access
   allow_anonymous_access: true
-  single_user_api_key: ${TILED_API_KEY}
+  single_user_api_key: $TILED_SINGLE_USER_API_KEY

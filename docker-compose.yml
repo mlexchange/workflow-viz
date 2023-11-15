@@ -10,7 +10,7 @@ services:
       - ./tiled:/app/tiled
       #- desy-drive:/data
       - .env:/app/.env
-      - ${PATH_TO_DATA_DESY}:/data
+      - ${PATH_TO_RAW_DATA}:/data
     environment:
       TILED_API_KEY: ${TILED_API_KEY}
       PATH_TO_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
@@ -29,12 +29,15 @@ services:
     command: bash -c "/app/tiled/tiled_catalog_register.sh"
     volumes:
       - ./tiled:/app/tiled
-      #- desy-drive:/data
       - .env:/app/.env
-      - ${PATH_TO_DATA_DESY}:/data
+      #- data-drive:/data
+      - ${PATH_TO_RAW_DATA}:/data/raw
+      - ${PATH_TO_PROCESSED_DATA}:/data/processed
     environment:
-      PATH_TO_DATA_DESY: "/data"
-      PATH_TO_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
+      PATH_TO_RAW_DATA: "/data/raw"
+      PATH_TO_RAW_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
+      PATH_TO_PROCESSED_DATA: "/data/processed"
+      PATH_TO_PROCESSED_DATA_CATALOG: "/app/tiled/db/catalog_processed_docker.db"
     networks:
       - workflow_viz_default
 

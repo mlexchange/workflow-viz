@@ -27,8 +27,6 @@ def get_scan_options():
     """
     Returns a list of trimmed Tiled Uris for scans
     """
-    # Currently very DESY specific, looking for lmbdp03 and embl_2m
-    # and inside of 'raw"
     scan_uri_map = dict()
     raw_client = client["raw"]
 
@@ -39,8 +37,8 @@ def get_scan_options():
                 detector_client = node_client[key]
                 for key in detector_client.keys():
                     scan_uri = trim_base_from_uri(detector_client[key].uri)
-                    trimmed_mask_name = scan_uri.replace("raw/", "")
-                    scan_uri_map[trimmed_mask_name] = scan_uri
+                    trimmed_scan_name = scan_uri.replace("raw/", "")
+                    scan_uri_map[trimmed_scan_name] = scan_uri
 
     return scan_uri_map
 
@@ -63,12 +61,12 @@ def get_mask_options():
     # Here we are still assuming all masks are in one folder,
     # if that is the case, the logic here would not yet be needed,
     # but they may not be in the future
-    raw_client = client["raw"]
+    raw_client = client["processed"]
     masks = raw_client["masks"]
     mask_uri_mapper = dict()
     for mask_name in masks.keys():
         mask_uri = trim_base_from_uri(masks[mask_name].uri)
-        trimmed_mask_name = mask_uri.replace("raw/masks/", "")
+        trimmed_mask_name = mask_uri.replace("processed/masks/", "")
         mask_uri_mapper[trimmed_mask_name] = mask_uri
     return mask_uri_mapper
 
