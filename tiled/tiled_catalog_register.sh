@@ -6,6 +6,10 @@ echo "Python Path: $PYTHONPATH"
 echo "Data catalog for raw data: $PATH_TO_RAW_DATA_CATALOG"
 echo "Data catalog for processed data: $PATH_TO_PROCESSED_DATA_CATALOG"
 
+if [! -f "$PATH_TO_PROCESSED_DATA_CATALOG"]; then
+    tiled catalog init $PATH_TO_PROCESSED_DATA_CATALOG
+fi
+
 if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
      tiled catalog register $PATH_TO_PROCESSED_DATA_CATALOG --verbose \
             --prefix "/" \
@@ -20,6 +24,10 @@ if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
             "$PATH_TO_PROCESSED_DATA"
 else
     echo "The directory for raw data ($PATH_TO_PROCESSED_DATA) does not exist."
+fi
+
+if [! -f "$PATH_TO_RAW_DATA_CATALOG"]; then
+    tiled catalog init $PATH_TO_RAW_DATA
 fi
 
 ## Will overwrite
