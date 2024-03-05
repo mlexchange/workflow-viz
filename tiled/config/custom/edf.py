@@ -1,11 +1,15 @@
 import logging
 import os
 import pathlib
+from logging import StreamHandler
 
 import fabio
 from tiled.adapters.array import ArrayAdapter
+from tiled.structures.core import Spec
 
 logger = logging.getLogger("tiled.adapters.edf")
+logger.addHandler(StreamHandler())
+logger.setLevel("INFO")
 
 
 def parse_txt_accompanying_edf(filepath):
@@ -54,7 +58,7 @@ def read(filepath, metadata=None, **kwargs):
     # extract additional meta data from it
     # TODO: parse text file
     parse_txt_accompanying_edf(filepath)
-    return ArrayAdapter.from_array(array, metadata=metadata)
+    return ArrayAdapter.from_array(array, metadata=metadata, specs=[Spec("edf")])
 
 
 async def walk_edf_with_txt(

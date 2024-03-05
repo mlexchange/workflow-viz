@@ -1,10 +1,14 @@
 # import re
 import logging
+from logging import StreamHandler
 
 import fabio
 from tiled.adapters.array import ArrayAdapter
+from tiled.structures.core import Spec
 
 logger = logging.getLogger("tiled.adapters.edf")
+logger.addHandler(StreamHandler())
+logger.setLevel("INFO")
 
 
 def parse_cbf_header(header):
@@ -30,4 +34,4 @@ def read(filepath, metadata=None, **kwargs):
     if metadata is None:
         metadata = parse_cbf_header(file.header)
     # return ArrayAdapter.from_array(array, metadata=metadata, **kwargs)
-    return ArrayAdapter.from_array(array, metadata=metadata)
+    return ArrayAdapter.from_array(array, metadata=metadata, specs=[Spec("cbf")])
