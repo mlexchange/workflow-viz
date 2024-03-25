@@ -25,6 +25,7 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
         scan_height = scan_data.shape[0]
         scan = go.Heatmap(z=scan_data, colorscale="viridis", zmax=100, zauto=False)
         figure = go.Figure(data=scan, layout=SCAN_FIGURE_LAYOUT)
+        figure["layout"]["yaxis"]["autorange"] = "reversed"
     else:
         scan_width = 1679
         scan_height = 1475

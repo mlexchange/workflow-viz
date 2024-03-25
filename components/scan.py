@@ -20,7 +20,7 @@ SCAN_FIGURE_LAYOUT = go.Layout(
         title="pixel",
         linecolor="#BCCCDC",
     ),
-    yaxis=dict(title="pixel", linecolor="#BCCCDC", scaleanchor='x'),
+    yaxis=dict(title="pixel", linecolor="#BCCCDC", scaleanchor="x"),
     margin={"b": 10, "t": 25},
 )
 
