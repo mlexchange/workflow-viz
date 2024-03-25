@@ -1,4 +1,5 @@
 # import plotly.express as px
+import numpy as np
 import plotly.graph_objects as go
 from dash import Input, Output, Patch, State, callback
 from dash.exceptions import PreventUpdate
@@ -23,9 +24,12 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
         scan_data = get_scan_data(scan_uri)
         scan_width = scan_data.shape[1]
         scan_height = scan_data.shape[0]
-        scan = go.Heatmap(z=scan_data, colorscale="viridis", zmax=100, zauto=False)
+        zmin = np.percentile(scan_data, 1)
+        zmax = np.percentile(scan_data, 99)
+        scan = go.Heatmap(
+            z=scan_data, colorscale="viridis", zmin=zmin, zmax=zmax, zauto=False
+        )
         figure = go.Figure(data=scan, layout=SCAN_FIGURE_LAYOUT)
-        figure["layout"]["yaxis"]["autorange"] = "reversed"
     else:
         scan_width = 1679
         scan_height = 1475
@@ -41,7 +45,7 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
                 go.Heatmap(z=mask_data, colorscale="Greys", showscale=False)
             )
             figure["data"][1]["opacity"] = 1 / 10
-
+    figure["layout"]["yaxis"]["autorange"] = "reversed"
     return figure, {"width": scan_width, "height": scan_height}
 
 
