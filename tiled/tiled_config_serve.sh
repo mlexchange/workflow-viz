@@ -3,7 +3,6 @@
 set -o allexport
 source .env
 set +o allexport
-export PYTHONPATH="$PYTHONPATH:$PWD/tiled/config/"
 export TILED_SINGLE_USER_API_KEY=$TILED_API_KEY
 
 # Replace environment variables in config.yml

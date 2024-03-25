@@ -6,13 +6,14 @@ echo "Python Path: $PYTHONPATH"
 echo "Data catalog for raw data: $PATH_TO_RAW_DATA_CATALOG"
 echo "Data catalog for processed data: $PATH_TO_PROCESSED_DATA_CATALOG"
 
+# Should no longer be needed since tiled serve comes first
 if [[ ! -f "$PATH_TO_PROCESSED_DATA_CATALOG" ]]; then
     tiled catalog init $PATH_TO_PROCESSED_DATA_CATALOG
 fi
 
 if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
-     tiled catalog register $PATH_TO_PROCESSED_DATA_CATALOG --verbose \
-            --prefix "/" \
+     tiled register $TILED_URI --verbose \
+            --prefix "/processed" \
             --ext '.cbf=application/x-cbf' \
             --adapter 'application/x-cbf=custom.cbf:read' \
             --ext '.edf=application/x-edf' \
@@ -26,15 +27,15 @@ else
     echo "The directory for raw data ($PATH_TO_PROCESSED_DATA) does not exist."
 fi
 
+# Should no longer be needed since tiled serve comes first
 if [[ ! -f "$PATH_TO_RAW_DATA_CATALOG" ]]; then
     tiled catalog init $PATH_TO_RAW_DATA_CATALOG
 fi
 
 ## Will overwrite
 if [ -d "$PATH_TO_RAW_DATA" ]; then
-     tiled catalog register $PATH_TO_RAW_DATA_CATALOG --verbose \
-            --watch \
-            --prefix "/" \
+     tiled register $TILED_URI --verbose \
+            --prefix "/raw" \
             --ext '.cbf=application/x-cbf' \
             --adapter 'application/x-cbf=custom.cbf:read' \
             --ext '.edf=application/x-edf' \

@@ -7,9 +7,9 @@ from logging import StreamHandler
 import h5py
 import numpy as np
 from tiled.adapters.array import ArrayAdapter
-from tiled.catalog.register import create_node_safe, dict_or_none
-from tiled.catalog.utils import ensure_uri
+from tiled.client.register import create_node_or_drop_collision, dict_or_none
 from tiled.server.schemas import Asset, DataSource, Management
+from tiled.utils import ensure_uri
 
 logger = logging.getLogger("tiled.adapters.lambda_nxs")
 logger.addHandler(StreamHandler())
@@ -70,7 +70,7 @@ async def walk(
         dataset_path = "entry/instrument/detector/data"
         # Open one file and check if there is any data
         module = h5py.File(os.path.join(sequence[0]), "r")
-        if (len(module.get(dataset_path)) < 1):
+        if len(module.get(dataset_path)) < 1:
             logger.info(
                 "    SKIPPED: Did not group %d Nexus files into a sequence '%s' since"
                 + " they do not contain any data.",
@@ -89,7 +89,7 @@ async def walk(
         except Exception:
             logger.exception("    SKIPPED: Error constructing adapter for '%s'", name)
             return
-        await create_node_safe(
+        await create_node_or_drop_collision(
             catalog,
             key=key,
             structure_family=adapter.structure_family,

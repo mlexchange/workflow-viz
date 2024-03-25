@@ -41,7 +41,9 @@ TILED_BLACKLIST="<comma seperated list of file or directory names to ignore>"
 PREFECT_API_URL="http://127.0.0.1:4200/api"
 PATH_TO_RAW_DATA="<path to folder>"
 PATH_TO_PROCESSED_DATA="<path to folder>"
-PATH_TO_DATA_CATALOG="./tiled/db/catalog.db"
+PATH_TO_RAW_DATA_CATALOG="./tiled/db/catalog.db"
+PATH_TO_PROCESSED_DATA_CATALOG="./tiled/db/catalog_processed.db"
+PREFECT_API_URL="http://127.0.0.1:4200/api"
 ```
 
 Either `PATH_TO_RAW_DATA` and `PATH_TO_PROCESSED_DATA` may be contained in the same directory. They must match with the corresponding variables in the `SAXSWAXS-workflows` environment.

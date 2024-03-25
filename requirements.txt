@@ -11,5 +11,5 @@ python-dotenv==1.0.0
 h5py==3.9.0
 fabio==2023.6.0
 prefect==2.13.4
-tiled[all]==0.1.0a106
+tiled[all]==0.1.0a116
 gunicorn
