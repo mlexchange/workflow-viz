@@ -122,7 +122,9 @@ def get_mask_data(trimmed_mask_uri, scan_height, scan_width, downsample_factor=1
         return mask[::downsample_factor, ::downsample_factor]
     # Rotated?
     elif mask.shape[0] == scan_width and mask.shape[1] == scan_height:
-        return np.rot90(mask[::downsample_factor, ::downsample_factor])
+        flipped = np.flipud(mask)
+        rotated = np.rot90(flipped[::downsample_factor, ::downsample_factor], 3)
+        return rotated
     else:
         print("Mask dimensions and scan dimensions don't match.")
         return None
