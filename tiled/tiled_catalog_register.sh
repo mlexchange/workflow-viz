@@ -13,6 +13,7 @@ fi
 
 if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
      tiled register $TILED_URI --verbose \
+            --api-key $TILED_API_KEY \
             --prefix "/processed" \
             --ext '.cbf=application/x-cbf' \
             --adapter 'application/x-cbf=custom.cbf:read' \
@@ -35,6 +36,7 @@ fi
 ## Will overwrite
 if [ -d "$PATH_TO_RAW_DATA" ]; then
      tiled register $TILED_URI --verbose \
+            --api-key $TILED_API_KEY \
             --prefix "/raw" \
             --ext '.cbf=application/x-cbf' \
             --adapter 'application/x-cbf=custom.cbf:read' \
