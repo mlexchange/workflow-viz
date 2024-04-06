@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Export environment variables to this shell
 set -o allexport
 source .env

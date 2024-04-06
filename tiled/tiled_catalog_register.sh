@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 source .env
 echo "Executing Folder: $PWD"
 export PYTHONPATH="$PYTHONPATH:$PWD/tiled/config/"
