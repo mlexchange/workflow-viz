@@ -104,7 +104,7 @@ def layout():
                 dmc.NumberInput(
                     label="Incident Angle",
                     description="in degrees",
-                    id="indicent-angle",
+                    id="incident-angle",
                     value=0,
                     precision=3,
                     size="sm",
