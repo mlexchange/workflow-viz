@@ -43,12 +43,19 @@ def check_flow(n_intervals, flow_run_info):
 
 
 @callback(
+    Output("reduction-viewer", "figure", allow_duplicate=True),
     Output("reduction-container", "style"),
     Input("progress-stepper", "active"),
+    prevent_initial_call=True,
 )
 def toggle_controls_reduction_visibility(current_step):
     step = current_step if current_step is not None else 0
     if step == 1:
-        return {"display": "block"}
+        # Clear figure data
+        # TODO: Check if reduction and original input fit together (uri)
+        patched_figure = Patch()
+        patched_figure["data"][0]["x"] = None
+        patched_figure["data"][0]["y"] = None
+        return patched_figure, {"display": "block"}
     else:
-        return {"display": "none"}
+        return no_update, {"display": "none"}

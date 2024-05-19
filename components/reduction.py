@@ -8,6 +8,7 @@ COMPONENT_STYLE = {
     "padding": "10px",
     "borderRadius": "5px",
     "overflowY": "auto",
+    "display": "none",
 }
 
 REDUCTION_FIGURE_CONFIG = {"displayModeBar": False}
@@ -18,8 +19,10 @@ def layout():
         # title=dict(text="Step Preview", automargin=True, yref="paper"),
         plot_bgcolor="#FFFFFF",
         hovermode="x",
-        hoverdistance=100,  # Distance to show hover label of data point
-        spikedistance=1000,  # Distance to show spike
+        # Distance to show hover label of data point
+        hoverdistance=100,
+        # Distance to show spike
+        spikedistance=1000,
         xaxis=dict(
             title="pixel",
             linecolor="#BCCCDC",
