@@ -66,4 +66,4 @@ async def _deployment_names():
 
 
 def get_full_deployment_names():
-    return _deployment_names()
+    return asyncio.run(_deployment_names())

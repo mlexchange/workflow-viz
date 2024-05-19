@@ -1,5 +1,3 @@
-import asyncio
-
 from dash import Input, Output, State, callback
 
 from utils.prefect import get_full_deployment_names, schedule_prefect_flow
@@ -70,7 +68,7 @@ def submit_reduction_to_compute(
             "output_unit": "q",  # "q"
         }
         flow_name = "integration-azimuthal"
-        reduction_flows = asyncio.run(get_full_deployment_names())
+        reduction_flows = get_full_deployment_names()
         deployment_name = reduction_flows[flow_name]
         flow_run_id = schedule_prefect_flow(deployment_name, parameters)
 
