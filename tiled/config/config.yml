@@ -4,6 +4,7 @@ file_extensions:
   edf: application/x-edf
   cbf: application/x-cbf
   fits: application/x-fits
+  gb: application/x-gb
 
 trees:
   - path: /raw

@@ -19,6 +19,8 @@ if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
             --adapter 'application/x-cbf=custom.cbf:read' \
             --ext '.edf=application/x-edf' \
             --adapter 'application/x-edf=custom.edf:read' \
+            --ext '.gb=application/x-gb' \
+            --adapter 'application/x-gb=custom.gb:read' \
             --walker 'custom.blacklist:walk' \
             --walker 'custom.whitelist:walk' \
             --walker 'custom.lambda_nxs:walk' \
@@ -42,6 +44,8 @@ if [ -d "$PATH_TO_RAW_DATA" ]; then
             --adapter 'application/x-cbf=custom.cbf:read' \
             --ext '.edf=application/x-edf' \
             --adapter 'application/x-edf=custom.edf:read' \
+            --ext '.gb=application/x-gb' \
+            --adapter 'application/x-gb=custom.gb:read' \
             --walker 'custom.blacklist:walk' \
             --walker 'custom.whitelist:walk' \
             --walker 'custom.lambda_nxs:walk' \

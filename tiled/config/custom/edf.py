@@ -56,8 +56,8 @@ def read(data_uri, structure=None, metadata=None, specs=None, access_policy=None
 
     Parameters
     ----------
-    filepath: str or pathlib.Path
-        Filepath of the .edf file.
+    data_uri: str
+        Uri of the .edf file, typically a file:// uri.
     """
     # TODO Should we catch any read errors here?
     filepath = path_from_uri(data_uri)
