@@ -39,12 +39,19 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
         mask_uri = mask_name_uri_map[mask_name]
         mask_data = get_mask_data(
             mask_uri, scan_height=scan_height, scan_width=scan_width
-        )
+        ).astype(np.uint8)
         if mask_data is not None:
+            # Masks exported from Igor have zeros for areas to be masked out
+            # Masks exported from pyFAI have non-zero values for these areas
+            # Fully transparent for non-masked values, fully opaque for masked
+            mask_colorscale = [
+                [0, "rgba(0, 0, 0, 1)"],
+                [1, "rgba(0, 0, 0, 0)"],
+            ]
             figure.add_trace(
-                go.Heatmap(z=mask_data, colorscale="Greys", showscale=False)
+                go.Heatmap(z=mask_data, colorscale=mask_colorscale, showscale=False)
             )
-            figure["data"][1]["opacity"] = 1 / 10
+            # figure["data"][1]["opacity"] = 1 / 2
     figure["layout"]["yaxis"]["autorange"] = "reversed"
     return figure, {"width": scan_width, "height": scan_height}
 
