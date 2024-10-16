@@ -43,7 +43,6 @@ def get_csv_file_uri(experiment_name):
         client = from_uri(TILED_URI, api_key=TILED_API_KEY)
         processed_experiment_uri = client["processed"][experiment_name].uri
         get_csv_file_uri = processed_experiment_uri+f"/{experiment_name}"
-        print(get_csv_file_uri)
         return get_csv_file_uri
     except Exception as e:
         error_message = f"Error retrieving csv file uri: {e}"
@@ -67,7 +66,6 @@ def write_csv_from_interface(experiment_name, data):
         client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
         container_client = client["processed"][experiment_name]
         csv_client = container_client[experiment_name]
-        print(csv_client.data_sources()[0]["assets"][0]["data_uri"])
         csv_file_local_uri = path_from_uri(csv_client.data_sources()[0]["assets"][0]["data_uri"])
         data.to_csv(csv_file_local_uri, index=False)
     except Exception as e:
