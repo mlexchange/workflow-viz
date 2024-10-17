@@ -68,11 +68,11 @@ def calculate_table_ratios(timestamp, rows):
     # This callback is used to update the table data when the table is edited
     #print("Calculating ratios")
     for row in rows:
-        #print(row)
-        if row["polymer_ratio_A"] and row["polymer_ratio_B"] and row["swell_ratio"]:
+        # Check if any of the required values are None
+        if row["polymer_ratio_A"] is not None and row["polymer_ratio_B"] is not None and row["swell_ratio"] is not None:
             row["fraction_A"], row["fraction_B"], row["fraction_C"] = calculate_ratios(
-            row["polymer_ratio_A"], row["polymer_ratio_B"], row["swell_ratio"]
-        )
+                row["polymer_ratio_A"], row["polymer_ratio_B"], row["swell_ratio"]
+            )
     return rows
 
 @callback(
