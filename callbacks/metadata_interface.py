@@ -108,8 +108,11 @@ def save_data(n_clicks, experiment_name, table_data, opened):
     # overwrite the csv on the file system
     return not opened
 
+
 @callback(
-    Output(component_id="example-table", component_property="data", allow_duplicate=True),
+    Output(
+        component_id="example-table", component_property="data", allow_duplicate=True
+    ),
     Input(component_id="refresh-data-button", component_property="n_clicks"),
     State(component_id="experiment-name-dropdown", component_property="value"),
     prevent_initial_call=True,

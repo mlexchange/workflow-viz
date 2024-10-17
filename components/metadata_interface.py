@@ -53,8 +53,9 @@ def table_modification_components():
     refresh_data_button = dmc.Button("Refresh Table", id="refresh-data-button")
 
     buttons_group = dmc.Group(
-        position="center", spacing="md", 
-        children=[refresh_data_button, add_row_button, save_data_button]
+        position="center",
+        spacing="md",
+        children=[refresh_data_button, add_row_button, save_data_button],
     )
 
     saved_popup = dmc.Modal(title="Saved!", id="saved-popup", size="lg")
