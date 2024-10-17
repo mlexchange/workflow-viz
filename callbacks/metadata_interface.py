@@ -24,6 +24,9 @@ def experiment_name_retrieval(search_value):
 )
 def select_experiment(n_clicks, experiment_name):
 
+    if experiment_name is None:
+        return [], []
+
     #Gets the table data from the Tiled csv node of the experiment name
     csv_file_uri = get_csv_file_uri(experiment_name)
     metadata_table = tiled_read_csv(csv_file_uri)
