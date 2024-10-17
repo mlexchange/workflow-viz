@@ -33,6 +33,7 @@ def convert_nika_mask_to_tiff(
 
     # Masks exported from Nika/Igor have zeros for areas to be masked out
     with h5py.File(nika_mask_path, "r") as hdf_file:
+        print(f"Reading mask key {mask_key} ...")
         if mask_key in hdf_file.keys():
             mask_data = hdf_file[mask_key][:]
             if invert:
@@ -43,6 +44,8 @@ def convert_nika_mask_to_tiff(
             mask_image = mask_image.rotate(-90, expand=True)
             mask_image.save(tiff_path, format="TIFF")
             print(f"Saved mask to {tiff_path}")
+        else:
+            print(f"Error: Mask key {mask_key} not found in {hdf_file.keys()}.")
 
 
 def convert_tiff_to_nika_mask(
@@ -108,7 +111,7 @@ def convert_mask(
     ) and output_path.lower().endswith(".hdf"):
         print(
             f"Converting TIFF image at {input_path}"
-            + f" to Nika HDF5 mask at {output_path}...",
+            + f" to Nika HDF5 mask at {output_path} ...",
         )
         convert_tiff_to_nika_mask(
             tiff_path=input_path,
@@ -121,7 +124,7 @@ def convert_mask(
     ):
         print(
             f"Converting Nika HDF5 mask at {input_path}"
-            + f" to TIFF image at {output_path}...",
+            + f" to TIFF image at {output_path} ...",
         )
         convert_nika_mask_to_tiff(
             nika_mask_path=input_path,
