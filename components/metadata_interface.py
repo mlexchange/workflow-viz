@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 
 # from PIL import Image
-from dash import Dash, dash_table, dcc, html
+from dash import dash_table, dcc, html
 
 
 def interface_components():

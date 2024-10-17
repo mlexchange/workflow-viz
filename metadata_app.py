@@ -1,8 +1,6 @@
 import dash
-import dash_mantine_components as dmc
-from dash import Dash, dash_table, dcc, html
+from dash import html
 
-from callbacks.metadata_interface import experiment_name_retrieval
 from components.metadata_interface import (
     interface_components,
     table_modification_components,

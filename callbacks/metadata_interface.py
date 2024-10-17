@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Input, Output, Patch, State, callback
+from dash import Input, Output, State, callback
 
 from utils.data_retrieval import (
     get_csv_file_uri,
@@ -7,7 +7,7 @@ from utils.data_retrieval import (
     tiled_read_csv,
     write_csv_from_interface,
 )
-from utils.metadata_utils import calculate_ratios, generate_next_scan_name
+from utils.metadata_utils import calculate_ratios  # generate_next_scan_name
 
 
 # generating the list of experiments for the dropdown
@@ -59,8 +59,9 @@ def select_experiment(n_clicks, experiment_name):
     prevent_initial_call=True,
 )
 def add_row(n_clicks, table_data, columns):
-    # Adding an empty row to the table by getting column names from the first entry in the table
-    # It is a list of dictionaries, but once the column names are added in select_experiment()
+    # Adding an empty row to the table by getting column names from
+    # the first entry in the table. It is a list of dictionaries, but
+    # once the column names are added in select_experiment()
     # modify this function to use 'columns' instead of 'table_data[0]'
     # print(table_data)
     # print(type(table_data))
