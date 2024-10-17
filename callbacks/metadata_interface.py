@@ -31,7 +31,7 @@ def select_experiment(n_clicks, experiment_name):
     #Add columns
     columns=[{"name": i, "id": i} for i in metadata_table.columns]
     #create uneditable columns for the table:
-    uneditable_column_names = ['scan_uri','fraction_A','fraction_B','fraction_C']
+    uneditable_column_names = ['fraction_A','fraction_B','fraction_C']
     for column in columns:
         if column['name'] in uneditable_column_names:
             column['editable'] = False
@@ -50,11 +50,11 @@ def add_row(n_clicks, table_data, columns):
     #Adding an empty row to the table by getting column names from the first entry in the table
     # It is a list of dictionaries, but once the column names are added in select_experiment()
     # modify this function to use 'columns' instead of 'table_data[0]'
-    print(table_data)
-    print(type(table_data))
-    new_scan_name = generate_next_scan_name(table_data)
+    #print(table_data)
+    #print(type(table_data))
+    #new_scan_name = generate_next_scan_name(table_data)
     new_row = {c: "" for c in table_data[0]}
-    new_row["scan_uri"] = new_scan_name
+    #new_row["scan_uri"] = new_scan_name
     table_data.append(new_row)
     return table_data
 
@@ -66,7 +66,9 @@ def add_row(n_clicks, table_data, columns):
 )
 def calculate_table_ratios(timestamp, rows):
     # This callback is used to update the table data when the table is edited
+    #print("Calculating ratios")
     for row in rows:
+        #print(row)
         if row["polymer_ratio_A"] and row["polymer_ratio_B"] and row["swell_ratio"]:
             row["fraction_A"], row["fraction_B"], row["fraction_C"] = calculate_ratios(
             row["polymer_ratio_A"], row["polymer_ratio_B"], row["swell_ratio"]

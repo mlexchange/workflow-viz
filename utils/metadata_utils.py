@@ -16,12 +16,14 @@ def generate_next_scan_name(data_table):
 def calculate_ratios(polymer_a, polymer_b, swell_ratio):
     
     # Calculate, r, a, b, c from the passed in numerical values
-
+    print("input ratios:", polymer_a, polymer_b, swell_ratio)
     r = float(polymer_a)/float(polymer_b)
+
     swell_ratio = float(swell_ratio)
     c = (swell_ratio-1)/swell_ratio if swell_ratio > 1 else 0
     
     # Handle case where b = 0 (r is very large or undefined)
+    #r = float(polymer_a)/float(polymer_b) if float(polymer_b) != 0 else float('inf')
     if r == float('inf') or r > 1e10:
         # If r is extremely large, set b = 0 and a = 1 - c
         b = 0
