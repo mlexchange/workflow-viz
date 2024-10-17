@@ -107,3 +107,18 @@ def save_data(n_clicks, experiment_name, table_data, opened):
     # send a call to the Tiled server to save the data
     # overwrite the csv on the file system
     return not opened
+
+@callback(
+    Output(component_id="example-table", component_property="data", allow_duplicate=True),
+    Input(component_id="refresh-data-button", component_property="n_clicks"),
+    State(component_id="experiment-name-dropdown", component_property="value"),
+    prevent_initial_call=True,
+)
+def refresh_data(n_clicks, experiment_name):
+    if experiment_name is None:
+        return []
+    csv_file_uri = get_csv_file_uri(experiment_name)
+    print(csv_file_uri)
+    metadata_table = tiled_read_csv(csv_file_uri)
+    metadata_table = metadata_table.to_dict("records")
+    return metadata_table
