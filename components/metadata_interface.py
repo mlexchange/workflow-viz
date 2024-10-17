@@ -1,12 +1,12 @@
 import dash_mantine_components as dmc
 
 # from PIL import Image
-from dash import dcc, html
-from dash import Dash, html, dcc, dash_table
+from dash import Dash, dash_table, dcc, html
+
 
 def interface_components():
     experiment_name_input = dcc.Dropdown(
-        options=[],  
+        options=[],
         placeholder="Select an experiment",
         id="experiment-name-dropdown",
         style={"width": 250},
@@ -33,7 +33,7 @@ def interface_components():
     #     ],
     # )
     stack = html.Div(
-        children = [
+        children=[
             html.Div(["Experiment name"]),
             dmc.Space(h=8),
             experiment_name_input,
@@ -44,30 +44,19 @@ def interface_components():
 
     return stack
 
+
 def table_modification_components():
-    
-    metadata_table = dash_table.DataTable(
-            id="example-table",
-            editable=True
-        )
-    
+    metadata_table = dash_table.DataTable(id="example-table", editable=True)
+
     add_row_button = dmc.Button("Add a row", id="add-row-button")
     save_data_button = dmc.Button("Save Data", id="save-data-button")
 
     buttons_group = dmc.Group(
-        position="center",
-        spacing="md",
-        children=[add_row_button, save_data_button]
+        position="center", spacing="md", children=[add_row_button, save_data_button]
     )
 
-    saved_popup = dmc.Modal(title = "Saved!", id="saved-popup", size="lg")
+    saved_popup = dmc.Modal(title="Saved!", id="saved-popup", size="lg")
 
-    table_components = html.Div(
-        [
-            saved_popup,
-            metadata_table,
-            buttons_group
-        ]
-    )
+    table_components = html.Div([saved_popup, metadata_table, buttons_group])
 
     return table_components

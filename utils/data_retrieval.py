@@ -1,14 +1,14 @@
 import os
 
 import numpy as np
+import pandas as pd
 from dotenv import load_dotenv
+from tiled.adapters import csv
 from tiled.client import from_uri
 from tiled.client.array import ArrayClient
 from tiled.client.container import Container
-from tiled.adapters import csv
 from tiled.utils import path_from_uri
 
-import pandas as pd
 # from tiled.client.cache import Cache
 
 load_dotenv()
@@ -27,27 +27,32 @@ def trim_base_from_uri(uri_to_trim):
     """
     return uri_to_trim.replace(TILED_BASE_URI, "")
 
+
 def get_processed_experiment_names():
     try:
         client = from_uri(TILED_URI, api_key=TILED_API_KEY)
         processed_list_of_experiments = client["processed"].keys()
-        list_of_experiments = [experiment for experiment in processed_list_of_experiments]
+        list_of_experiments = [
+            experiment for experiment in processed_list_of_experiments
+        ]
         return list_of_experiments
     except Exception as e:
         error_message = f"Error retrieving experiment names: {e}"
         print(error_message)
         return []
 
+
 def get_csv_file_uri(experiment_name):
     try:
         client = from_uri(TILED_URI, api_key=TILED_API_KEY)
         processed_experiment_uri = client["processed"][experiment_name].uri
-        get_csv_file_uri = processed_experiment_uri+f"/{experiment_name}"
+        get_csv_file_uri = processed_experiment_uri + f"/{experiment_name}"
         return get_csv_file_uri
     except Exception as e:
         error_message = f"Error retrieving csv file uri: {e}"
         print(error_message)
         return None
+
 
 def tiled_read_csv(csv_file_uri):
     try:
@@ -59,14 +64,16 @@ def tiled_read_csv(csv_file_uri):
         print(error_message)
         return None
 
-def write_csv_from_interface(experiment_name, data):
 
+def write_csv_from_interface(experiment_name, data):
     try:
-        #TODO: optimize this with a get_csv_file_uri function later
+        # TODO: optimize this with a get_csv_file_uri function later
         client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
         container_client = client["processed"][experiment_name]
         csv_client = container_client[experiment_name]
-        csv_file_local_uri = path_from_uri(csv_client.data_sources()[0]["assets"][0]["data_uri"])
+        csv_file_local_uri = path_from_uri(
+            csv_client.data_sources()[0]["assets"][0]["data_uri"]
+        )
         data.to_csv(csv_file_local_uri, index=False)
     except Exception as e:
         error_message = f"Error writing to csv file: {e}"

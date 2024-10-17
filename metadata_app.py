@@ -1,10 +1,12 @@
 import dash
-from dash import Dash, html, dcc, dash_table
 import dash_mantine_components as dmc
+from dash import Dash, dash_table, dcc, html
 
-from components.metadata_interface import interface_components
-from components.metadata_interface import table_modification_components
 from callbacks.metadata_interface import experiment_name_retrieval
+from components.metadata_interface import (
+    interface_components,
+    table_modification_components,
+)
 
 """
 Please run matadata_utils.ipynb in the utils folder before running this app
@@ -23,7 +25,6 @@ app.layout = html.Div(
         # ),
         interface_components(),
         table_modification_components(),
-        
     ]
 )
 
