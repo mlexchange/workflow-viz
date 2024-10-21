@@ -48,7 +48,7 @@ def check_flow(n_intervals, flow_run_info):
     Input("progress-stepper", "active"),
     prevent_initial_call=True,
 )
-def toggle_controls_reduction_visibility(current_step):
+def toggle_reduction_visibility(current_step):
     step = current_step if current_step is not None else 0
     if step == 1:
         # Clear figure data
