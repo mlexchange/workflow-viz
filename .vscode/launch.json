@@ -5,8 +5,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
-            "type": "python",
+            "name": "Debug App",
+            "type": "debugpy",
             "request": "launch",
             "module": "flask",
             "env": {
@@ -20,6 +20,18 @@
                 "--no-reload"
             ],
             "jinja": true
-        }
+        },
+        {
+            "name": "Debug Tiled",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tiled",
+            "args": [
+                "serve",
+                "config",
+                "./tiled/config/config_tmp.yml"
+            ],
+            "justMyCode": false,
+        },
     ]
 }
