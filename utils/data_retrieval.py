@@ -30,9 +30,7 @@ def get_processed_experiment_names():
     try:
         client = from_uri(TILED_URI, api_key=TILED_API_KEY)
         processed_list_of_experiments = client["processed"].keys()
-        list_of_experiments = [
-            experiment for experiment in processed_list_of_experiments
-        ]
+        list_of_experiments = list(processed_list_of_experiments)
         return list_of_experiments
     except Exception as e:
         error_message = f"Error retrieving experiment names: {e}"
@@ -72,7 +70,23 @@ def write_csv_from_interface(experiment_name, data):
         csv_file_local_uri = path_from_uri(
             csv_client.data_sources()[0]["assets"][0]["data_uri"]
         )
-        data.to_csv(csv_file_local_uri, index=False)
+        data.replace("", np.nan, inplace=True)
+        data = data.astype(
+            dtype={
+                "Step 1, 58k": float,
+                "Step 1, 32k": float,
+                "Swell ratio": float,
+                "Fraction 58k": float,
+                "Fraction 34k": float,
+                "Fraction Additive": float,
+                "Peak Position": float,
+                "Fwhm": float,
+                "d": float,
+                "Step 2, Additive": float,
+                "Step 2, Polymers": float,
+            }
+        )
+        data.to_csv(csv_file_local_uri, index=False, na_rep="None")
     except Exception as e:
         error_message = f"Error writing to csv file: {e}"
         print(error_message)

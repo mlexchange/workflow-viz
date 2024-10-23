@@ -40,6 +40,8 @@ def select_experiment(n_clicks, experiment_name):
 
     # Add columns
     columns = [{"name": i, "id": i} for i in metadata_table.columns]
+    # column["format"] = Format(scheme=Scheme.decimal, precision=2)
+
     # create uneditable columns for the table:
     uneditable_column_names = ["fraction_A", "fraction_B", "fraction_C"]
     for column in columns:
@@ -84,12 +86,16 @@ def calculate_table_ratios(timestamp, rows):
     for row in rows:
         # Check if any of the required values are None
         if (
-            row["polymer_ratio_A"] is not None
-            and row["polymer_ratio_B"] is not None
-            and row["swell_ratio"] is not None
+            row["Step 1, 58k"] is not None
+            and row["Step 1, 32k"] is not None
+            and row["Swell ratio"] is not None
         ):
-            row["fraction_A"], row["fraction_B"], row["fraction_C"] = calculate_ratios(
-                row["polymer_ratio_A"], row["polymer_ratio_B"], row["swell_ratio"]
+            (
+                row["Fraction 58k"],
+                row["Fraction 34k"],
+                row["Fraction Additive"],
+            ) = calculate_ratios(
+                row["Step 1, 58k"], row["Step 1, 32k"], row["Swell ratio"]
             )
     return rows
 
