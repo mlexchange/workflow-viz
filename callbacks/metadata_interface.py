@@ -2,6 +2,7 @@ import pandas as pd
 from dash import Input, Output, State, callback
 
 from utils.data_retrieval import (
+    get_column_names,
     get_csv_file_uri,
     get_processed_experiment_names,
     tiled_read_csv,
@@ -22,15 +23,30 @@ def experiment_name_retrieval(search_value):
 
 
 @callback(
-    Output(
-        component_id="example-table", component_property="data", allow_duplicate=True
-    ),
-    Output(component_id="example-table", component_property="columns"),
+    Output(component_id="columns-name-dropdown", component_property="options"),
     Input(component_id="select-expt-button", component_property="n_clicks"),
     State(component_id="experiment-name-dropdown", component_property="value"),
     prevent_initial_call=True,
 )
-def select_experiment(n_clicks, experiment_name):
+def column_name_retrieval(n_clicks, experiment_name):
+    if experiment_name is None:
+        return []
+    # Gets the table data from the Tiled csv node of the experiment name
+    column_names_list = get_column_names(experiment_name)
+    return column_names_list
+
+
+@callback(
+    Output(
+        component_id="example-table", component_property="data", allow_duplicate=True
+    ),
+    Output(component_id="example-table", component_property="columns"),
+    Input(component_id="select-column-button", component_property="n_clicks"),
+    State(component_id="experiment-name-dropdown", component_property="value"),
+    State(component_id="columns-name-dropdown", component_property="value"),
+    prevent_initial_call=True,
+)
+def select_experiment(n_clicks, experiment_name, uneditable_column_names):
     if experiment_name is None:
         return [], []
 
@@ -43,7 +59,7 @@ def select_experiment(n_clicks, experiment_name):
     # column["format"] = Format(scheme=Scheme.decimal, precision=2)
 
     # create uneditable columns for the table:
-    uneditable_column_names = ["fraction_A", "fraction_B", "fraction_C"]
+    # uneditable_column_names = ["fraction_A", "fraction_B", "fraction_C"]
     for column in columns:
         if column["name"] in uneditable_column_names:
             column["editable"] = False
@@ -87,7 +103,7 @@ def calculate_table_ratios(timestamp, rows):
         # Check if any of the required values are None
         if (
             row["Step 1, 58k"] is not None
-            and row["Step 1, 32k"] is not None
+            and row["Step 1, 34k"] is not None
             and row["Swell ratio"] is not None
         ):
             (
@@ -95,7 +111,7 @@ def calculate_table_ratios(timestamp, rows):
                 row["Fraction 34k"],
                 row["Fraction Additive"],
             ) = calculate_ratios(
-                row["Step 1, 58k"], row["Step 1, 32k"], row["Swell ratio"]
+                row["Step 1, 58k"], row["Step 1, 34k"], row["Swell ratio"]
             )
     return rows
 
@@ -129,5 +145,6 @@ def refresh_data(n_clicks, experiment_name):
     csv_file_uri = get_csv_file_uri(experiment_name)
     print(csv_file_uri)
     metadata_table = tiled_read_csv(csv_file_uri)
+    # The conversion to dictionary is necessary to avoid a non-JSON serializable error
     metadata_table = metadata_table.to_dict("records")
     return metadata_table

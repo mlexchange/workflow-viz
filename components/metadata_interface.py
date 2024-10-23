@@ -19,6 +19,21 @@ def interface_components():
         style={"width": 250},
     )
 
+    column_names_input = dcc.Dropdown(
+        options=[],
+        placeholder="Select uneditable columns",
+        id="columns-name-dropdown",
+        style={"width": 250},
+        multi=True,
+    )
+
+    select_column_button = dmc.Button(
+        id="select-column-button",
+        children="Select Column",
+        variant="filled",
+        style={"width": 250},
+    )
+
     # stack = dmc.Aside(
     #     p="md",
     #     width={"base": 300},
@@ -39,6 +54,12 @@ def interface_components():
             experiment_name_input,
             dmc.Space(h=8),
             select_experiment_button,
+            dmc.Space(h=16),
+            html.Div(["Select uneditabl column names"]),
+            dmc.Space(h=8),
+            column_names_input,
+            dmc.Space(h=8),
+            select_column_button,
         ],
     )
 

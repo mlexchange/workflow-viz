@@ -74,16 +74,15 @@ def write_csv_from_interface(experiment_name, data):
         data = data.astype(
             dtype={
                 "Step 1, 58k": float,
-                "Step 1, 32k": float,
+                "Step 1, 34k": float,
                 "Swell ratio": float,
                 "Fraction 58k": float,
                 "Fraction 34k": float,
                 "Fraction Additive": float,
                 "Peak Position": float,
                 "Fwhm": float,
-                "d": float,
-                "Step 2, Additive": float,
-                "Step 2, Polymers": float,
+                "domain spacing": float,
+                "grain size": float,
             }
         )
         data.to_csv(csv_file_local_uri, index=False, na_rep="None")
@@ -91,6 +90,13 @@ def write_csv_from_interface(experiment_name, data):
         error_message = f"Error writing to csv file: {e}"
         print(error_message)
         return None
+
+
+def get_column_names(experiment_name):
+    client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
+    csv_client = client["processed"][experiment_name][experiment_name]
+    # Column names have to be initialized properly when the csv file is created
+    return csv_client.data_sources()[0]["structure"]["columns"]
 
 
 def get_scan_options():
