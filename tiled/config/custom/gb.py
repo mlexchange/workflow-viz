@@ -2,7 +2,7 @@ import numpy as np
 from tiled.adapters.array import ArrayAdapter
 from tiled.structures.core import Spec
 from tiled.utils import path_from_uri
-#from tiled.config.custom.edf import parse_txt_accompanying_edf
+from custom.edf import parse_txt_accompanying_edf
 import pathlib
 import os
 import logging
@@ -32,6 +32,15 @@ def read(data_uri, structure=None, metadata=None, specs=None, access_policy=None
             f"Data size ({data.size}) does not match expected size ({expected_size})."
         )
     array = data.reshape((pixels_y, pixels_x))
+
+    additional_edf_metadata = parse_edf_accompanying_gb(filepath)
+    
+    # Combine the metadata dictionaries - the following method combines the 
+    # metadata dictionaries but there is a potential to overwrrite the values
+    # for the same keys. If same keys are present in both dictionaries, then
+    # an alternate method should be used to combine the dictionaries, similar to
+    # the one used in the combine_edf_metadata_for_gb method.
+    metadata = {**metadata, **additional_edf_metadata} if metadata else additional_edf_metadata
 
     return ArrayAdapter.from_array(array, metadata=metadata, specs=[Spec("gb")])
 
@@ -83,7 +92,7 @@ def parse_edf_accompanying_gb(file_path):
         edf_hi_filepath = file_path.replace("sfloat_2m.gb", "hi_2m.edf")
     if isinstance(file_path, pathlib.Path):
         edf_hi_filepath = file_path.with_suffix(".edf")
-        edf_hi_filepath = edf_hi_filepath.replace("sfloat", "hi")
+        edf_hi_filepath = pathlib.Path(str(edf_hi_filepath).replace("sfloat", "hi"))
 
     # File does not exist, return empty dictionary
     if not os.path.isfile(edf_hi_filepath):
@@ -104,7 +113,7 @@ def parse_edf_accompanying_gb(file_path):
         edf_lo_filepath = file_path.replace("sfloat_2m.gb", "lo_2m.edf")
     if isinstance(file_path, pathlib.Path):
         edf_lo_filepath = file_path.with_suffix(".edf")
-        edf_lo_filepath = edf_lo_filepath.replace("sfloat", "lo")
+        edf_lo_filepath = pathlib.Path(str(edf_lo_filepath).replace("sfloat", "lo"))
 
     # File does not exist, return empty dictionary
     if not os.path.isfile(edf_lo_filepath):
@@ -118,7 +127,6 @@ def parse_edf_accompanying_gb(file_path):
 
     # Combine the metadata dictionaries
     gb_dictionary = combine_edf_metadata_for_gb(edf_hi_metadata_dict, edf_lo_metadata_dict)
-    print(gb_dictionary)
 
     # Compare two dates and select the later one
     gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
