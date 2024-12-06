@@ -1,55 +1,25 @@
 import dash_mantine_components as dmc
+import plotly.graph_objects as go
 from dash import dash_table, dcc, html
 from dash.dash_table.Format import Format
 
 COMPONENT_STYLE = {
-    #    "width": "800px",
-    #    "height": "calc(60vh - 40px)",
     "padding": "10px",
     "borderRadius": "5px",
     "overflowY": "auto",
+    "display": "none",
 }
 
 FITTING_FIGURE_CONFIG = {"displayModeBar": False}
 
 
 def layout():
-    peak_table = html.Div(
+    fitting_result = html.Div(
         children=[
-            dmc.Center(dmc.Text("Current Tags")),
+            dmc.Center(dmc.Text("Fitted Peaks")),
             dash_table.DataTable(
-                id="peak-table",
+                id="fitting-result-table",
                 columns=[
-                    {
-                        "name": "Peak X",
-                        "id": "peak-x",
-                        "type": "numeric",
-                        "format": Format(precision=2),
-                    },
-                    {
-                        "name": "Peak Y",
-                        "id": "peak-y",
-                        "type": "numeric",
-                        "format": Format(precision=2),
-                    },
-                    {
-                        "name": "SD",
-                        "id": "stddev",
-                        "type": "numeric",
-                        "format": Format(precision=2),
-                    },
-                    {
-                        "name": "FWHM_G",
-                        "id": "fwhm-g",
-                        "type": "numeric",
-                        "format": Format(precision=2),
-                    },
-                    {
-                        "name": "FWHM_L",
-                        "id": "fwhm-l",
-                        "type": "numeric",
-                        "format": Format(precision=2),
-                    },
                     {
                         "name": "Fitted Peak X",
                         "id": "fitted-peak-x",
@@ -71,36 +41,42 @@ def layout():
                 ],
                 data=[
                     {
-                        "peak-x": 0,
-                        "peak-y": 1,
-                        "stddev": 0.01,
-                        "fwhm-g": 0.01,
-                        "fwhm-l": 0.01,
                         "fitted-peak-x": None,
                         "fitted-peak-y": None,
                         "fitted-fwhm": None,
                     }
                 ],
-                editable=True,
+                editable=False,
                 row_deletable=True,
             ),
         ]
     )
 
-    # Definition of warning modal
-    fitting_warning = dmc.Modal(
-        title="Warning",
-        children=[
-            dmc.Text(
-                "Fitting process failed. Please adjust the parameters and try again."
-            ),
-        ],
-        id="fitting-warning",
-        is_open=False,
-        style={"color": "red"},
+    figure_layout = go.Layout(
+        # title=dict(text="Step Preview", automargin=True, yref="paper"),
+        plot_bgcolor="#FFFFFF",
+        hovermode="x",
+        # Distance to show hover label of data point
+        hoverdistance=100,
+        # Distance to show spike
+        spikedistance=1000,
+        xaxis=dict(
+            title="pixel",
+            linecolor="#BCCCDC",
+            # Show spike line for X-axis
+            showspikes=True,
+            # Format spike
+            spikethickness=2,
+            spikedash="dot",
+            spikecolor="#999999",
+            spikemode="across",
+        ),
+        yaxis=dict(title="intensity", linecolor="#BCCCDC"),
+        margin={"b": 10, "t": 20},
     )
 
-    figure = None
+    figure = go.Figure(data=go.Scatter(), layout=figure_layout)
+    figure.update_traces(line_color="#1f78b4")
 
     return html.Div(
         id="fitting-container",
@@ -108,7 +84,6 @@ def layout():
         children=[
             dmc.Center(children=dmc.Text("Fitting", weight=500, size="lg")),
             dcc.Graph(id="fitting-viewer", figure=figure, config=FITTING_FIGURE_CONFIG),
-            peak_table,
-            fitting_warning,
+            fitting_result,
         ],
     )

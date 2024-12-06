@@ -23,7 +23,9 @@ def submit_fitting_to_compute(
             "input_uri_data": reduction_data_uri,
             "peak_shape": peak_shape.lower(),
         }
-        flow_name = "fit_peaks_simple"
+        # x_data, y_data, x_peaks, y_peaks, stddevs, fwhm_Gs, fwhm_Ls,
+
+        flow_name = "simple_peak_fit"
         reduction_flows = asyncio.run(get_full_deployment_names())
         deployment_name = reduction_flows[flow_name]
         flow_run_id = schedule_prefect_flow(deployment_name, parameters)
@@ -39,7 +41,7 @@ def submit_fitting_to_compute(
     Output("controls-fitting", "style"),
     Input("progress-stepper", "active"),
 )
-def toggle_controls_reduction_visibility(current_step):
+def toggle_controls_fitting_visibility(current_step):
     step = current_step if current_step is not None else 0
     if step == 2:
         return {"display": "block"}

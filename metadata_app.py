@@ -1,8 +1,7 @@
 import dash
 from dash import html
 
-from callbacks.metadata_interface import * #noqa: F401, F403
-
+from callbacks.metadata_interface import *  # noqa: F401, F403
 from components.metadata_interface import (
     interface_components,
     table_modification_components,

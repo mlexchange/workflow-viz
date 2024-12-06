@@ -3,8 +3,8 @@
 # import pandas as pd
 # import plotly.graph_objects as go
 # from dash import ALL, MATCH, callback
-from dash import callback
-from dash.dependencies import Input, Output  # , State
+from dash import Patch, callback, no_update
+from dash.dependencies import Input, Output, State
 
 # @callback(Output("plot_data", "figure"), Input("filename", "value"))
 # def display_data(filename):
@@ -159,3 +159,21 @@ def hide_columns(peak_shape):
         return ["fwhm-l", "fwhm-g"]
     else:
         return ["stddev"]
+
+
+@callback(
+    Output("reduction-viewer", "figure", allow_duplicate=True),
+    Output("reduction-container", "style"),
+    State("reduction-viewer", "figure", allow_duplicate=True),
+    Input("progress-stepper", "active"),
+    prevent_initial_call=True,
+)
+def toggle_fitting_visibility(reduction_figure, current_step):
+    step = current_step if current_step is not None else 0
+    if step == 2:
+        patched_figure = Patch()
+        patched_figure["data"][0]["x"] = reduction_figure["data"][0]["x"]
+        patched_figure["data"][0]["y"] = reduction_figure["data"][0]["y"]
+        return patched_figure, {"display": "block"}
+    else:
+        return no_update, {"display": "none"}
