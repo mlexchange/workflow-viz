@@ -94,19 +94,21 @@ def parse_edf_accompanying_gb(file_path):
         edf_hi_filepath = file_path.with_suffix(".edf")
         edf_hi_filepath = pathlib.Path(str(edf_hi_filepath).replace("sfloat", "hi"))
 
-    # File does not exist, return empty dictionary
+    # File does not exist, set the date as None - empty metadata dictionary is 
+    # returned in the parse_txt_accompanying_edf method
     if not os.path.isfile(edf_hi_filepath):
-        return dict()
-    
-    #extract the header information and import the function for edf and read the metadata
-    # take the metadata from both and if the same key is present in both, keep the values of both   
-    # but index it with hi and lo
-
-    hi_file = fabio.open(edf_hi_filepath)
-    hi_header = hi_file.header
-    hi_date = hi_header.get("Date")
+        #edf_hi_metadata_dict = dict()
+        hi_date = None
+    else:
+        hi_file = fabio.open(edf_hi_filepath)
+        hi_header = hi_file.header
+        hi_date = hi_header.get("Date")
     
     edf_hi_metadata_dict = parse_txt_accompanying_edf(edf_hi_filepath)
+    
+    # extract the header information and import the function for edf and read the metadata
+    # take the metadata from both and if the same key is present in both, keep the values of both   
+    # but index it with hi and lo
 
     edf_lo_filepath = None
     if isinstance(file_path, str):
@@ -115,13 +117,15 @@ def parse_edf_accompanying_gb(file_path):
         edf_lo_filepath = file_path.with_suffix(".edf")
         edf_lo_filepath = pathlib.Path(str(edf_lo_filepath).replace("sfloat", "lo"))
 
-    # File does not exist, return empty dictionary
+    # File does not exist, set the date as None - empty metadata dictionary is 
+    # returned in the parse_txt_accompanying_edf method
     if not os.path.isfile(edf_lo_filepath):
-        return dict()
-    
-    lo_file = fabio.open(edf_lo_filepath)
-    lo_header = lo_file.header
-    lo_date = lo_header.get("Date")
+        #edf_lo_metadata_dict = dict()
+        lo_date = None
+    else: 
+        lo_file = fabio.open(edf_lo_filepath)
+        lo_header = lo_file.header
+        lo_date = lo_header.get("Date")
     
     edf_lo_metadata_dict = parse_txt_accompanying_edf(edf_lo_filepath)
 
@@ -129,7 +133,10 @@ def parse_edf_accompanying_gb(file_path):
     gb_dictionary = combine_edf_metadata_for_gb(edf_hi_metadata_dict, edf_lo_metadata_dict)
 
     # Compare two dates and select the later one
-    gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
+    if hi_date is not None and lo_date is not None:
+        gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
+    else:
+        gb_dictionary["Date"] = hi_date if hi_date is not None else lo_date
 
     return gb_dictionary
 
