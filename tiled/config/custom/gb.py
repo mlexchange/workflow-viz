@@ -94,10 +94,11 @@ def parse_edf_accompanying_gb(file_path):
         edf_hi_filepath = file_path.with_suffix(".edf")
         edf_hi_filepath = pathlib.Path(str(edf_hi_filepath).replace("sfloat", "hi"))
 
-    # File does not exist, set the date as None - empty metadata dictionary is 
-    # returned in the parse_txt_accompanying_edf method
+    # If the .txt file exists, the metadata is extracted from it
+    # In case the .txt file does not exist:
+    #  - set the date as None,  
+    #  - An empty metadata dictionary is initilized (returned from parse_txt_accompanying_edf())
     if not os.path.isfile(edf_hi_filepath):
-        #edf_hi_metadata_dict = dict()
         hi_date = None
     else:
         hi_file = fabio.open(edf_hi_filepath)
@@ -117,10 +118,11 @@ def parse_edf_accompanying_gb(file_path):
         edf_lo_filepath = file_path.with_suffix(".edf")
         edf_lo_filepath = pathlib.Path(str(edf_lo_filepath).replace("sfloat", "lo"))
 
-    # File does not exist, set the date as None - empty metadata dictionary is 
-    # returned in the parse_txt_accompanying_edf method
+    # If the .txt file exists, the metadata is extracted from it
+    # In case the .txt file does not exist:
+    #  - set the date as None,  
+    #  - An empty metadata dictionary is initilized (returned from parse_txt_accompanying_edf())
     if not os.path.isfile(edf_lo_filepath):
-        #edf_lo_metadata_dict = dict()
         lo_date = None
     else: 
         lo_file = fabio.open(edf_lo_filepath)
