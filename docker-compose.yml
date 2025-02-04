@@ -43,6 +43,7 @@ services:
 
   workflow-viz:
     image: workflow_viz
+    build: .
     container_name: workflow_viz
     command: 'python app.py'
     environment:
