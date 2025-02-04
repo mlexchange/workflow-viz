@@ -1,6 +1,18 @@
 import dash_mantine_components as dmc
 from dash import Dash, dcc, html
 
+try:
+    import utils.data_retrieval
+except Exception as e:
+    import sys
+
+    print(
+        "Error importing utils.data_retrieval. "
+        "This is often caused by not being able to connect to the Tiled server. "
+        f"Error: {e}"
+    )
+    sys.exit(1)
+
 from callbacks.config_loader import *
 from callbacks.controls_calibration import *
 from callbacks.controls_reduction import *

@@ -15,8 +15,15 @@ load_dotenv()
 TILED_URI = os.getenv("TILED_URI")
 TILED_API_KEY = os.getenv("TILED_API_KEY")
 
-client = from_uri(TILED_URI, api_key=TILED_API_KEY)
-TILED_BASE_URI = client.uri
+if TILED_URI is None or TILED_API_KEY is None:
+    raise ValueError("TILED_URI and TILED_API_KEY must be set in the .env file")
+
+try:
+    client = from_uri(TILED_URI, api_key=TILED_API_KEY)
+    TILED_BASE_URI = client.uri
+except Exception as e:
+    error_message = f"Error connecting to Tiled server: {e}"
+    raise ValueError(error_message)
 
 
 def trim_base_from_uri(uri_to_trim):
