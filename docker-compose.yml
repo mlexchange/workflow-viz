@@ -3,13 +3,13 @@
 version: "3"
 services:
   tiled:
-    image: workflow_viz
+    image: ghcr.io/bluesky/tiled:0.1.0-b17
     container_name: tiled_workflow_server
     command: bash -c "/app/tiled/tiled_config_serve.sh"
     volumes:
       - ./tiled:/app/tiled
       #- desy-drive:/data
-      - .env:/app/.env
+      - .env:/deploy/.env
       - ${PATH_TO_RAW_DATA}:/data
     environment:
       TILED_API_KEY: ${TILED_API_KEY}
@@ -43,6 +43,7 @@ services:
 
   workflow-viz:
     image: workflow_viz
+    build: .
     container_name: workflow_viz
     command: 'python app.py'
     environment:
@@ -56,8 +57,6 @@ services:
       - ./utils:/app/utils
     ports:
       - '8095:8095'
-    depends_on:
-      - tiled
     networks:
       - workflow_viz_default
 
