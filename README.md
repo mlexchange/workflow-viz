@@ -19,7 +19,7 @@ source workflow-viz-env/bin/activate
 or Anaconda:
 
 ```bash
-conda create --name workflow-viz-env
+conda create --name workflow-viz-env python=3.9 
 conda activate workflow-viz-env
 ```
 
