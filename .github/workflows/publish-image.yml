@@ -52,7 +52,7 @@ jobs:
       - name: Test
         run: |
           CONTAINER_ID=$(docker run -d --rm ${{ env.TEST_TAG }})
-          sleep 5  # Allow time for the server to start
+          sleep 30  # Allow time for the server to start
           docker logs $CONTAINER_ID  # Show logs to confirm it's running
           docker stop $CONTAINER_ID  # Stop the container
 
