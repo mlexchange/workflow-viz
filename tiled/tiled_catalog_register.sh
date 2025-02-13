@@ -15,16 +15,6 @@ if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
      tiled register $TILED_URI --verbose \
             --api-key $TILED_API_KEY \
             --prefix "/processed" \
-            --ext '.cbf=application/x-cbf' \
-            --adapter 'application/x-cbf=custom.cbf:read' \
-            --ext '.edf=application/x-edf' \
-            --adapter 'application/x-edf=custom.edf:read' \
-            --ext '.gb=application/x-gb' \
-            --adapter 'application/x-gb=custom.gb:read' \
-            --walker 'custom.blacklist:walk' \
-            --walker 'custom.whitelist:walk' \
-            --walker 'custom.lambda_nxs:walk' \
-            --adapter 'multipart/related;type=application/x-hdf5=custom.lambda_nxs:read_sequence' \
             "$PATH_TO_PROCESSED_DATA"
 else
     echo "The directory for raw data ($PATH_TO_PROCESSED_DATA) does not exist."
