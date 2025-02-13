@@ -36,14 +36,6 @@ if (-not ([string]::IsNullOrWhiteSpace($Env:PATH_TO_PROCESSED_DATA_CATALOG)) -an
 if (-not ([string]::IsNullOrWhiteSpace("$Env:PATH_TO_PROCESSED_DATA")) -and (Test-Path "$Env:PATH_TO_PROCESSED_DATA" -PathType Container)){
     tiled register $Env:TILED_URI --verbose `
     --prefix "/processed" `
-    --ext '.edf=application/x-edf' `
-    --adapter 'application/x-edf=custom.edf:read' `
-    --ext '.gb=application/x-gb' `
-    --adapter 'application/x-gb=custom.gb:read' `
-    --ext '.cbf=application/x-cbf' `
-    --adapter 'application/x-cbf=custom.cbf:read' `
-    --walker 'custom.lambda_nxs:walk' `
-    --adapter 'multipart/related;type=application/x-hdf5=custom.lambda_nxs:read_sequence' `
     "$Env:PATH_TO_PROCESSED_DATA"
 } else {
     Write-Host "The directory for processed data ($Env:PATH_TO_PROCESSED_DATA) does not exist."
