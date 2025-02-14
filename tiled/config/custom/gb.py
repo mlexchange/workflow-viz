@@ -144,9 +144,9 @@ def parse_edf_accompanying_gb(file_path):
 
     # Compare two dates and select the later one, but the string version for better readability
     if hi_date is not None and lo_date is not None:
-        gb_dictionary["Date"] = hi_date_str if hi_date > lo_date else lo_date_str
+        gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
     else:
-        gb_dictionary["Date"] = hi_date_str if hi_date is not None else lo_date_str
+        gb_dictionary["Date"] = hi_date if hi_date is not None else lo_date
 
     return gb_dictionary
 
