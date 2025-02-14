@@ -8,6 +8,7 @@ import os
 import logging
 from logging import StreamHandler
 import fabio
+from datetime import datetime
 
 logger = logging.getLogger("tiled.adapters.edf")
 logger.addHandler(StreamHandler())
@@ -108,7 +109,9 @@ def parse_edf_accompanying_gb(file_path):
     else:
         hi_file = fabio.open(edf_hi_filepath)
         hi_header = hi_file.header
-        hi_date = hi_header.get("Date")
+        hi_date_str = hi_header.get("Date")
+        # Parse the string to convert to datetime object
+        hi_date = datetime.strptime(hi_date_str, '%a %b %d %H:%M:%S %Y')
         #  Combine the metadata dictionaries - from header and .txt file
         edf_hi_metadata_dict = {**edf_hi_metadata_dict, **hi_header}
 
@@ -130,18 +133,20 @@ def parse_edf_accompanying_gb(file_path):
     else: 
         lo_file = fabio.open(edf_lo_filepath)
         lo_header = lo_file.header
-        lo_date = lo_header.get("Date")
+        lo_date_str = lo_header.get("Date")
+        # Parse the string to convert to datetime object
+        lo_date = datetime.strptime(lo_date_str, '%a %b %d %H:%M:%S %Y')
         #  Combine the metadata dictionaries - from header and .txt file
         edf_lo_metadata_dict = {**edf_lo_metadata_dict, **lo_header}
 
     # Combine the metadata dictionaries
     gb_dictionary = combine_edf_metadata_for_gb(edf_hi_metadata_dict, edf_lo_metadata_dict)
 
-    # Compare two dates and select the later one
+    # Compare two dates and select the later one, but the string version for better readability
     if hi_date is not None and lo_date is not None:
-        gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
+        gb_dictionary["Date"] = hi_date_str if hi_date > lo_date else lo_date_str
     else:
-        gb_dictionary["Date"] = hi_date if hi_date is not None else lo_date
+        gb_dictionary["Date"] = hi_date_str if hi_date is not None else lo_date_str
 
     return gb_dictionary
 
