@@ -8,6 +8,6 @@ exclude =
 per-file-ignores =
     app.py: F401, F403
     app_live.py: F401, F403
-max-line-length = 88
+max-line-length = 115
 # Compatibility with black formatting, black adds whitespace before a colon
 extend-ignore = E203

@@ -1,5 +1,8 @@
+import os
+
 import dash_mantine_components as dmc
 from dash import Dash, dcc, html
+from redis import Redis
 
 try:
     import utils.data_retrieval
@@ -25,6 +28,15 @@ from components.controls_reduction import layout as controls_reduction_layout
 from components.progress import layout as progress_layout
 from components.reduction import layout as reduction_layout
 from components.scan import layout as scan_layout
+from utils.redis import RedisWorkflow
+
+redis_conn = None
+try:
+    host = os.getenv("FLASK_HOST", "127.0.0.01")
+    port = os.getenv("FLASK_PORT", 8095)
+    redis_conn = Redis("localhost", 44444)
+except Exception as e:
+    print(f"redis unavaialble {e}")
 
 # Initialize the Dash app
 app = Dash(__name__)
@@ -60,4 +72,4 @@ app.layout = dmc.MantineProvider(
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port="8095")
+    app.run(debug=True, host=host, port=port)

@@ -1,6 +1,6 @@
 from dash import Input, Output, State, callback
 
-from utils.prefect import get_full_deployment_names, schedule_prefect_flow
+from app import redis_conn
 
 
 @callback(
@@ -67,16 +67,18 @@ def submit_reduction_to_compute(
             "outer_radius": radial_range_max,
             "output_unit": "q",  # "q"
         }
-        flow_name = "integration-azimuthal"
-        reduction_flows = get_full_deployment_names()
-        deployment_name = reduction_flows[flow_name]
-        flow_run_id = schedule_prefect_flow(deployment_name, parameters)
 
-        result_uri = scan_uri.replace("raw/", "/processed/")
-        last_container = result_uri.split("/")[-1]
-        result_uri += f"/{last_container}_{flow_name}"
-        flow_run_data = {"id": flow_run_id, "result_uri": result_uri}
-        return flow_run_data, True
+        redis_conn.set(parameters)
+        # flow_name = "integration-azimuthal"
+        # reduction_flows = workflow.get_full_deployment_names()
+        # deployment_name = reduction_flows[flow_name]
+        # flow_run_id = workflow.submit_job(deployment_name, parameters)
+
+        # result_uri = scan_uri.replace("raw/", "/processed/")
+        # last_container = result_uri.split("/")[-1]
+        # result_uri += f"/{last_container}_{flow_name}"
+        # flow_run_data = {"id": flow_run_id, "result_uri": result_uri}
+        # return flow_run_data, True
 
 
 @callback(

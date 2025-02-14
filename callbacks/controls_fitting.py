@@ -2,7 +2,7 @@ import asyncio
 
 from dash import Input, Output, State, callback
 
-from utils.prefect import get_full_deployment_names, schedule_prefect_flow
+from utils.workflow import workflow
 
 
 @callback(
@@ -24,9 +24,9 @@ def submit_fitting_to_compute(
             "peak_shape": peak_shape.lower(),
         }
         flow_name = "fit_peaks_simple"
-        reduction_flows = asyncio.run(get_full_deployment_names())
+        reduction_flows = asyncio.run(workflow.get_full_deployment_names())
         deployment_name = reduction_flows[flow_name]
-        flow_run_id = schedule_prefect_flow(deployment_name, parameters)
+        flow_run_id = workflow.submit_fitting_to_compute(deployment_name, parameters)
 
         result_uri = reduction_data_uri
         last_container = result_uri.split("/")[-1]
