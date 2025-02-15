@@ -15,7 +15,8 @@ def layout():
     # radial_vs_azimuthal = dmc.Switch()
     # game-icons:radial-balance
 
-    constrols_integration = dmc.Grid(
+    controls_integration = dmc.Grid(
+        id="controls-reduction-integration",
         children=[
             dmc.Col(
                 dmc.NumberInput(
@@ -94,14 +95,80 @@ def layout():
                 ),
                 span=3,
             ),
-        ]
+        ],
+    )
+
+    controls_horizontal_cut = dmc.Grid(
+        id="controls-reduction-cut",
+        children=[
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Cut Position in Y",
+                    description="in pixel [0, ...]",
+                    id="cut-pos-y",
+                    value=0,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                    persistence=True,
+                    persistence_type="session",
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="Half Width of Cut",
+                    description="in pixel [0, ...]",
+                    id="horizontal-cut-half-width",
+                    type="number",
+                    value=5,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                    persistence=True,
+                    persistence_type="session",
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="X Min",
+                    description="in pixel [0, ...]",
+                    id="horizontal-x-min",
+                    value=0,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=1,
+                ),
+                span=3,
+            ),
+            dmc.Col(
+                dmc.NumberInput(
+                    label="X Max",
+                    description="in pixel [0, ...]",
+                    id="horizontal-x-max",
+                    value=0,
+                    precision=0,
+                    size="sm",
+                    stepHoldDelay=500,
+                    stepHoldInterval=100,
+                    persistence=True,
+                    persistence_type="session",
+                ),
+                span=3,
+            ),
+        ],
     )
 
     return html.Div(
         id="controls-reduction",
         style=COMPONENT_STYLE,
         children=[
-            constrols_integration,
+            controls_integration,
+            controls_horizontal_cut,
             dmc.Space(h=20),
             dmc.Center(
                 dmc.Button(
