@@ -1,6 +1,5 @@
 import os
 
-import numpy as np
 from dotenv import load_dotenv
 from tiled.client import from_uri
 from tiled.utils import path_from_uri
@@ -211,11 +210,6 @@ def get_mask_data(trimmed_mask_uri, scan_height, scan_width, downsample_factor=1
     mask = from_uri(TILED_BASE_URI + trimmed_mask_uri, api_key=TILED_API_KEY)
     if mask.shape[0] == scan_height and mask.shape[1] == scan_width:
         return mask[::downsample_factor, ::downsample_factor]
-    # Rotated?
-    elif mask.shape[0] == scan_width and mask.shape[1] == scan_height:
-        flipped = np.flipud(mask)
-        rotated = np.rot90(flipped[::downsample_factor, ::downsample_factor], 3)
-        return rotated
     else:
         print("Mask dimensions and scan dimensions don't match.")
         return None
