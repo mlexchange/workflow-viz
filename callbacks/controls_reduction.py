@@ -81,11 +81,27 @@ def submit_reduction_to_compute(
 
 @callback(
     Output("controls-reduction", "style"),
+    Output("controls-reduction-integration", "style"),
+    Output("controls-reduction-cut", "style"),
+    Input("experiment-type", "value"),
     Input("progress-stepper", "active"),
 )
-def toggle_controls_reduction_visibility(current_step):
+def toggle_controls_reduction_visibility(experiment_type, current_step):
     step = current_step if current_step is not None else 0
     if step == 1:
-        return {"display": "block"}
+        if experiment_type is not None and experiment_type.startswith("GI"):
+            # Show cut controls, hide integration
+            return (
+                {"display": "block"},
+                {"display": "none"},
+                {"display": "flex"},
+            )
+        else:
+            # Show integration controls, hide cut
+            return (
+                {"display": "block"},
+                {"display": "flex"},
+                {"display": "none"},
+            )
     else:
-        return {"display": "none"}
+        return {"display": "none"}, {"display": "none"}, {"display": "none"}
