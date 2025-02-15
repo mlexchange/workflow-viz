@@ -5,7 +5,7 @@ from dash import Input, Output, Patch, State, callback, ctx, no_update
 from dash.exceptions import PreventUpdate
 
 from components.scan import SCAN_FIGURE_LAYOUT
-from utils.create_shapes import create_cross
+from utils.create_shapes import create_cross, create_rect_center_line
 from utils.data_retrieval import get_mask_data, get_scan_data
 
 
@@ -109,3 +109,79 @@ def update_beamcenter_indicator(
         return patched_figure, no_update, no_update
 
     return patched_figure, x_value, y_value
+
+
+@callback(
+    Output("scan-viewer", "figure", allow_duplicate=True),
+    Output("horizontal-cut-pos-y", "value", allow_duplicate=True),
+    Output("horizontal-x-min", "value", allow_duplicate=True),
+    Output("horizontal-x-max", "value", allow_duplicate=True),
+    Input("scan-viewer", "clickData"),
+    State("scan-viewer", "figure"),
+    State("experiment-type", "value"),
+    Input("horizontal-cut-pos-y", "value"),
+    Input("horizontal-cut-half-width", "value"),
+    Input("horizontal-x-min", "value"),
+    Input("horizontal-x-max", "value"),
+    Input("progress-stepper", "active"),
+    State("scan-dims", "data"),
+    prevent_initial_call=True,
+)
+def update_horizontal_cut_indicator(
+    click_data,
+    fig,
+    experiment_type,
+    horizontal_cut_pos_y,
+    horizontal_cut_half_width,
+    horizontal_cut_x_min,
+    horizontal_cut_x_max,
+    current_step,
+    scan_dims,
+):
+    if current_step != 1 or (
+        experiment_type is not None and not experiment_type.startswith("GI")
+    ):
+        raise PreventUpdate
+
+    scan_width = scan_dims["width"]
+    scan_height = scan_dims["height"]
+
+    trigger = ctx.triggered_id
+    if click_data is not None and trigger == "scan-viewer":
+        x_value = click_data["points"][0]["x"]
+        y_value = click_data["points"][0]["y"]
+        # Assume that the user wants the width of the cut to stay the
+        old_width = horizontal_cut_x_max - horizontal_cut_x_min + 1
+        x_min = max(0, int(x_value - old_width / 2))
+        x_max = min(scan_width - 1, int(x_value + old_width / 2))
+    else:
+        x_value = (horizontal_cut_x_min + horizontal_cut_x_max) / 2
+        y_value = horizontal_cut_pos_y
+        x_min = horizontal_cut_x_min
+        x_max = horizontal_cut_x_max
+
+    rect, center_line = create_rect_center_line(
+        center_x=x_value,
+        center_y=y_value,
+        rect_width=horizontal_cut_x_max - horizontal_cut_x_min + 1,
+        rect_height=horizontal_cut_half_width * 2 + 1,
+        scan_width=scan_width,
+        scan_height=scan_height,
+    )
+
+    patched_figure = Patch()
+
+    current_shapes = fig.get("layout", {}).get("shapes", [])
+
+    if len(current_shapes) < 4:
+        patched_figure["layout"]["shapes"].append(rect)
+        patched_figure["layout"]["shapes"].append(center_line)
+    else:
+        patched_figure["layout"]["shapes"][2] = rect
+        patched_figure["layout"]["shapes"][3] = center_line
+
+    y_update = y_value if y_value != horizontal_cut_pos_y else no_update
+    x_min_update = x_min if x_min != horizontal_cut_x_min else no_update
+    x_max_update = x_max if x_max != horizontal_cut_x_max else no_update
+
+    return patched_figure, y_update, x_min_update, x_max_update
