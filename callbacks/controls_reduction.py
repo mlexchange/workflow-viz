@@ -54,7 +54,7 @@ def submit_reduction_to_compute(
     horizontal_cut_half_width,
     horizontal_cut_pos_y,
     horizontal_cut_x_min,
-    horizontal_x_max,
+    horizontal_cut_x_max,
 ):
     if n_clicks:
         scan_uri = scan_name_uri_mapper[scan_name]
@@ -74,7 +74,7 @@ def submit_reduction_to_compute(
                 "cut_half_width": horizontal_cut_half_width,
                 "cut_pos_y": horizontal_cut_pos_y,
                 "x_min": horizontal_cut_x_min,
-                "x_max": horizontal_x_max,
+                "x_max": horizontal_cut_x_max,
             }
             parameters = {
                 **parameters_calibration,
@@ -142,3 +142,18 @@ def toggle_controls_reduction_visibility(experiment_type, current_step):
             )
     else:
         return {"display": "none"}, {"display": "none"}, {"display": "none"}
+
+
+@callback(
+    Output("horizontal-cut-pos-y", "value"),
+    Output("horizontal-x-max", "value"),
+    Input("beamcenter-y", "value"),
+    Input("scan-dims", "data"),
+)
+def set_default_cut_positions(
+    beamcenter_y,
+    scan_dims,
+):
+    scan_width = scan_dims["width"]
+    # Set suggested cut position 100 pixels above (visually, lower in y) the beamcenter
+    return beamcenter_y - 100, scan_width
