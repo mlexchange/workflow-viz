@@ -105,7 +105,7 @@ def layout():
                 dmc.NumberInput(
                     label="Cut Position in Y",
                     description="in pixel [0, ...]",
-                    id="cut-pos-y",
+                    id="horizontal-cut-pos-y",
                     value=0,
                     precision=0,
                     size="sm",
