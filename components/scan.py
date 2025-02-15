@@ -33,7 +33,13 @@ def layout():
     figure = go.Figure(go.Scatter(x=[], y=[]), layout=SCAN_FIGURE_LAYOUT)
 
     horizontal_line, vertical_line = create_cross(
-        scan_width / 2, scan_height / 2, 20, 20, scan_width, scan_height
+        scan_width / 2,
+        scan_height / 2,
+        20,
+        20,
+        scan_width,
+        scan_height,
+        line_color="white",
     )
 
     figure.add_shape(horizontal_line)
