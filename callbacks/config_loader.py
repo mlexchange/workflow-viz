@@ -44,7 +44,7 @@ def apply_config_import(apply, parameters):
         "beamcenter_x",
         "beamcenter_y",
         "wavelength",
-        "incident-angle",
+        "incident_angle",
         "pix_size",
         "sample_detector_dist",
         "rotation",

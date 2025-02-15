@@ -107,6 +107,7 @@ def layout():
                     id="incident-angle",
                     value=0,
                     precision=3,
+                    step=0.01,
                     size="sm",
                     stepHoldDelay=500,
                     stepHoldInterval=1,
