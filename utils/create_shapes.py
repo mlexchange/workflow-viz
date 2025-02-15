@@ -8,8 +8,8 @@ def create_cross(
     height,
     scan_width,
     scan_height,
-    line_color="white",
-    line_width=5,
+    line_color="red",
+    line_width=3,
 ):
     horizontal_line = go.layout.Shape(
         type="line",
