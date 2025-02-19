@@ -1,6 +1,9 @@
 from dash import Input, Output, State, callback
 
-from utils.redis import REDUCTION_CONFIG_KEY, redis_conn
+from utils.redis import redis_conn
+
+REDUCTION_CONFIG_KEY = "reduction_config"
+REDUCTION_CHANNEL = "scattering"
 
 
 @callback(
@@ -101,15 +104,15 @@ def submit_reduction_to_compute(
         if True:  # for later consideration
             print(f"Saving parameters to Redis {parameters}")
             redis_conn.set_json(REDUCTION_CONFIG_KEY, parameters)
-            number_subscribers = redis_conn.publish("scattering", "compute_reduction")
+            number_subscribers = redis_conn.publish(
+                REDUCTION_CHANNEL, "compute_reduction"
+            )
             print(f"Published to {number_subscribers} subscribers")
 
         # else:
         #     reduction_flows = get_full_deployment_names()
         #     deployment_name = reduction_flows[flow_name]
         #     flow_run_id = schedule_prefect_flow(deployment_name, parameters)
-
-        redis_conn.set(parameters)
         # flow_name = "integration-azimuthal"
         # reduction_flows = workflow.get_full_deployment_names()
         # deployment_name = reduction_flows[flow_name]

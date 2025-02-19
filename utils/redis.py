@@ -1,38 +1,49 @@
-from typing import Optional
+import json
 
-from redis import Redis
-
-from .workflow import Workflow
-
-REDUCTION_CONFIG_KEY = "reduction_config"
+import redis.asyncio as redis
 
 
-class RedisWorkflow(Workflow):
-    def __init__(self, redis: Redis):
-        self.redis = redis
+class RedisConn:
+    def __init__(self, redis_conn: redis.Redis):
+        self.redis_conn = redis_conn
 
-    def submit_reduction_to_compute(self):
-        pass
+    async def get(self, key: str):
+        return await self.redis_conn.get(key)
 
-    def submit_fitting_to_compute(self):
-        pass
+    async def set(self, key: str, value):
+        await self.redis_conn.set(key, value)
 
-    def check_flow_status(self, flow_id: str):
-        pass
+    async def get_json(self, key: str):
+        value_s = await self.redis_conn.get(key)
+        if value_s:
+            values_js = json.loads(value_s)
+        else:
+            values_js = {}
+        return values_js
 
-    def submit_job(
-        self, deployment_name: str, parameters: Optional[dict] = None
-    ) -> str:
-        pass
+    async def set_json(self, key: str, value: dict):
+        value_s = json.dumps(value)
+        await self.reddis_conn.set(key, value_s)
 
-    def get_workflow_names(self) -> dict:
-        pass
+    async def redis_subscribe(self, channel_name: str, callback: callable) -> None:
+        """Listens for messages on a Redis Pub/Sub channel asynchronously."""
+        pubsub = self.redis_conn.pubsub()
+        channel_name = "scattering"
+        await pubsub.subscribe(channel_name)  # Subscribe to the channel
 
-    def get_full_deployment_names(self) -> dict:
-        pass
+        print(f"Listening for messages on '{channel_name}'...")
 
-    def save_reduction_config(self, config: dict):
-        self.redis.set(REDUCTION_CONFIG_KEY, config)
+        async for message in pubsub.listen():
+            if (
+                message["type"] == "message"
+            ):  # Ignore subscription confirmation messages
+                if message["channel"] == channel_name:
+                    await callback(message["data"])
 
-    def from_settings(redis: Redis):
-        return RedisWorkflow(redis)
+    @classmethod
+    def from_settings(cls, settings: dict) -> "RedisConn":
+        pool = redis.ConnectionPool(
+            host=settings.host, port=settings.port, decode_responses=True
+        )
+        redis_conn = redis.Redis(connection_pool=pool)
+        return cls(redis_conn)
