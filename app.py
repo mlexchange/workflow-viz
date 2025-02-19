@@ -38,6 +38,9 @@ try:
 except Exception as e:
     print(f"redis unavaialble {e}")
 
+FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
+FLASK_PORT = os.getenv("FLASK_PORT", "8095")
+
 # Initialize the Dash app
 app = Dash(__name__)
 app.title = "Workflow Configuration"
@@ -72,4 +75,4 @@ app.layout = dmc.MantineProvider(
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=host, port=port)
+    app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)

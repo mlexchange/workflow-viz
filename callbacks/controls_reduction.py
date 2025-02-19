@@ -1,6 +1,6 @@
 from dash import Input, Output, State, callback
 
-from app import redis_conn
+from utils.redis import REDUCTION_CONFIG_KEY, redis_conn
 
 
 @callback(
@@ -81,7 +81,7 @@ def submit_reduction_to_compute(
                 **parameters_cut,
                 "incident_angle": incident_angle,
             }
-            flow_name = "horizontal-cut"
+            # flow_name = "horizontal-cut"
         else:
             parameters_integration = {
                 "num_bins": num_bins_integration,
@@ -97,11 +97,17 @@ def submit_reduction_to_compute(
                 "rotation": detector_rotation,
                 "tilt": detector_tilt,
             }
-            flow_name = "integration-azimuthal"
+            # flow_name = "integration-azimuthal"
+        if True:  # for later consideration
+            print(f"Saving parameters to Redis {parameters}")
+            redis_conn.set_json(REDUCTION_CONFIG_KEY, parameters)
+            number_subscribers = redis_conn.publish("scattering", "compute_reduction")
+            print(f"Published to {number_subscribers} subscribers")
 
-        reduction_flows = get_full_deployment_names()
-        deployment_name = reduction_flows[flow_name]
-        flow_run_id = schedule_prefect_flow(deployment_name, parameters)
+        # else:
+        #     reduction_flows = get_full_deployment_names()
+        #     deployment_name = reduction_flows[flow_name]
+        #     flow_run_id = schedule_prefect_flow(deployment_name, parameters)
 
         redis_conn.set(parameters)
         # flow_name = "integration-azimuthal"

@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 from dotenv import load_dotenv
 from tiled.client import from_uri
 from tiled.utils import path_from_uri
@@ -138,9 +139,9 @@ def get_scan_options():
     scans = {}
     for scan_id in last_ten_ids:
         scan = raw_root[scan_id]
-        scan_id = f"{scan.metadata['start']['scan_id']} {scan.metadata['start']['sample_name']}"
-        scans[scan_id] = trim_base_from_uri(scan.uri)
-    # scans["foo"] = "/smi/raw/c21d472b-4241-4f48-8d62-a0b56e1d471d/primary/data/pil900KW_image"
+        scan_id_value = scan.metadata["start"]["scan_id"]
+        sample_name = scan.metadata["start"]["sample_name"]
+        scan_id = f"{scan_id_value} {sample_name}"
     return scans
 
 
@@ -186,11 +187,9 @@ def get_scan_data(trimmed_scan_uri, index=0, downsample_factor=1):
 
 def get_mask_options():
     masks = {}
-    # masks["foo"] =
-    # "https://tiled.nsls2.bnl.gov/api/v1/metadata/smi/processed/masks/2c6e404f-7eff-40f7-87ef-6744d529cdc6"
-    masks[
-        "foo"
-    ] = "smi/raw/2c6e404f-7eff-40f7-87ef-6744d529cdc6/primary/data/pil900KW_image"
+    masks["foo"] = (
+        "smi/raw/2c6e404f-7eff-40f7-87ef-6744d529cdc6/primary/data/pil900KW_image"
+    )
     return masks
 
 
@@ -201,6 +200,11 @@ def get_mask_data(trimmed_mask_uri, scan_height, scan_width, downsample_factor=1
     mask = from_uri(TILED_BASE_URI + trimmed_mask_uri, api_key=TILED_API_KEY)
     if mask.shape[0] == scan_height and mask.shape[1] == scan_width:
         return mask[::downsample_factor, ::downsample_factor]
+    # Rotated?
+    elif mask.shape[0] == scan_width and mask.shape[1] == scan_height:
+        flipped = np.flipud(mask)
+        rotated = np.rot90(flipped[::downsample_factor, ::downsample_factor], 3)
+        return rotated
     else:
         print("Mask dimensions and scan dimensions don't match.")
         return None
