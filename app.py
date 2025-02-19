@@ -75,4 +75,10 @@ app.layout = dmc.MantineProvider(
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)
+    app.run(
+        requests_pathname_prefix="/workflow-viz/",
+        routes_pathname_prefix="/workflow-viz/",
+        debug=True,
+        host=FLASK_HOST,
+        port=FLASK_PORT,
+    )
