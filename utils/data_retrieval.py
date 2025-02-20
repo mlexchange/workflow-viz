@@ -135,13 +135,15 @@ def write_csv_from_interface(experiment_name, data):
 
 def get_scan_options():
     raw_root = client["smi"]["raw"]
-    last_ten_ids = raw_root.keys()[-1000:-1010:-1]
+    last_ten_ids = raw_root.keys()[-1:-20:-1]
     scans = {}
     for scan_id in last_ten_ids:
         scan = raw_root[scan_id]
         scan_id_value = scan.metadata["start"]["scan_id"]
         sample_name = scan.metadata["start"]["sample_name"]
         scan_id = f"{scan_id_value} {sample_name}"
+        print(scan_id)
+        scans[scan_id] = scan.uri
     return scans
 
 
@@ -149,12 +151,16 @@ def get_scan_data(trimmed_scan_uri, index=0, downsample_factor=1):
     """
     Returns the data corresponding to the trimmed scan uri
     """
-    scan = from_uri(f"{TILED_BASE_URI}{trimmed_scan_uri}", api_key=TILED_API_KEY)
-    images = scan["primary"]["data"]["pil900KW_image"]
-    if len(images.shape) == 2:
-        return images[::downsample_factor, ::downsample_factor]
-    else:
-        return images[index, ::downsample_factor, ::downsample_factor]
+    try:
+        scan = from_uri(f"{trimmed_scan_uri}", api_key=TILED_API_KEY)
+        images = scan["primary"]["data"]["pil900KW_image"]
+        if len(images.shape) == 2:
+            return images[::downsample_factor, ::downsample_factor]
+        else:
+            return images[index, ::downsample_factor, ::downsample_factor]
+    except Exception as e:
+        error_message = f"Error retrieving scan data: {e}"
+        print(error_message)
 
 
 # def get_mask_options():
@@ -187,9 +193,9 @@ def get_scan_data(trimmed_scan_uri, index=0, downsample_factor=1):
 
 def get_mask_options():
     masks = {}
-    masks["foo"] = (
-        "smi/raw/2c6e404f-7eff-40f7-87ef-6744d529cdc6/primary/data/pil900KW_image"
-    )
+    masks[
+        "foo"
+    ] = "smi/raw/2c6e404f-7eff-40f7-87ef-6744d529cdc6/primary/data/pil900KW_image"
     return masks
 
 
