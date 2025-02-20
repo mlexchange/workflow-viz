@@ -3,7 +3,7 @@ from dash import Input, Output, Patch, State, callback, no_update
 from dash.exceptions import PreventUpdate
 
 from utils.data_retrieval import get_reduction_data
-from utils.workflow import workflow
+from utils.prefect import check_status_flow_run
 
 
 @callback(
@@ -19,7 +19,7 @@ def check_flow(n_intervals, flow_run_info):
 
     if flow_run_info["id"]:
         flow_run_id = flow_run_info["id"]
-        status = workflow.check_flow_status(flow_run_id)
+        status = check_status_flow_run(flow_run_id)
         if status == "completed":
             # Retrieve results and update figure
             patched_figure = Patch()
