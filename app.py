@@ -2,7 +2,8 @@ import os
 
 import dash_mantine_components as dmc
 from dash import Dash, dcc, html
-from redis import Redis
+
+from utils.redis import RedisConn
 
 try:
     import utils.data_retrieval
@@ -28,13 +29,12 @@ from components.controls_reduction import layout as controls_reduction_layout
 from components.progress import layout as progress_layout
 from components.reduction import layout as reduction_layout
 from components.scan import layout as scan_layout
-from utils.redis import RedisWorkflow
 
 redis_conn = None
 try:
     host = os.getenv("FLASK_HOST", "127.0.0.01")
     port = os.getenv("FLASK_PORT", 8095)
-    redis_conn = Redis("localhost", 44444)
+    redis_conn = RedisConn.from_env()
 except Exception as e:
     print(f"redis unavaialble {e}")
 
@@ -42,7 +42,11 @@ FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
 FLASK_PORT = os.getenv("FLASK_PORT", "8095")
 
 # Initialize the Dash app
-app = Dash(__name__)
+app = Dash(
+    __name__,
+    requests_pathname_prefix="/workflow-viz/",
+    routes_pathname_prefix="/workflow-viz/",
+)
 app.title = "Workflow Configuration"
 application = app.server
 
@@ -76,8 +80,6 @@ app.layout = dmc.MantineProvider(
 
 if __name__ == "__main__":
     app.run(
-        requests_pathname_prefix="/workflow-viz/",
-        routes_pathname_prefix="/workflow-viz/",
         debug=True,
         host=FLASK_HOST,
         port=FLASK_PORT,
