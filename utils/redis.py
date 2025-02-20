@@ -1,4 +1,5 @@
 import json
+import os
 
 import redis.asyncio as redis
 
@@ -44,6 +45,16 @@ class RedisConn:
     def from_settings(cls, settings: dict) -> "RedisConn":
         pool = redis.ConnectionPool(
             host=settings.host, port=settings.port, decode_responses=True
+        )
+        redis_conn = redis.Redis(connection_pool=pool)
+        return cls(redis_conn)
+
+    @classmethod
+    def from_env(cls) -> "RedisConn":
+        pool = redis.ConnectionPool(
+            host=os.getenv("REDIS_HOST", "localhost"),
+            port=os.getenv("REDIS_PORT", 6379),
+            decode_responses=True,
         )
         redis_conn = redis.Redis(connection_pool=pool)
         return cls(redis_conn)

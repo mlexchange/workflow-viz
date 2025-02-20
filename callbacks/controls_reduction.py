@@ -1,9 +1,11 @@
 from dash import Input, Output, State, callback
 
-from utils.redis import redis_conn
+from utils.redis import RedisConn
 
 REDUCTION_CONFIG_KEY = "reduction_config"
 REDUCTION_CHANNEL = "scattering"
+
+redis_conn = RedisConn.from_env()
 
 
 @callback(
