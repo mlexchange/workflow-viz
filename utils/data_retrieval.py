@@ -153,7 +153,12 @@ def get_scan_data(trimmed_scan_uri, index=0, downsample_factor=1):
     """
     try:
         scan = from_uri(f"{trimmed_scan_uri}", api_key=TILED_API_KEY)
-        images = scan["primary"]["data"]["pil900KW_image"]
+        images = scan["primary"]["data"]["pil1M_image"]
+        if len(images.shape) == 4:
+            if images.shape[0] == 1:
+                return images[0, index, ::downsample_factor, ::downsample_factor]
+            else:
+                return images[index, 0, ::downsample_factor, ::downsample_factor]
         if len(images.shape) == 2:
             return images[::downsample_factor, ::downsample_factor]
         else:
