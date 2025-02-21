@@ -24,7 +24,7 @@ class RedisConn:
 
     def set_json(self, key: str, value: dict):
         value_s = json.dumps(value)
-        self.reddis_conn.set(key, value_s)
+        self.redis_conn.set(key, value_s)
 
     def redis_subscribe(self, channel_name: str, callback: callable) -> None:
         """Listens for messages on a Redis Pub/Sub channel asynchronously."""

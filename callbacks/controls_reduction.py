@@ -104,12 +104,15 @@ def submit_reduction_to_compute(
             }
             # flow_name = "integration-azimuthal"
         if True:  # for later consideration
-            print(f"Saving parameters to Redis {parameters}")
-            redis_conn.set_json(REDUCTION_CONFIG_KEY, parameters)
-            number_subscribers = redis_conn.publish(
-                REDUCTION_CHANNEL, "compute_reduction"
-            )
-            print(f"Published to {number_subscribers} subscribers")
+            try:
+                print(f"Saving parameters to Redis {parameters}")
+                redis_conn.set_json(REDUCTION_CONFIG_KEY, parameters)
+                number_subscribers = redis_conn.publish(
+                    REDUCTION_CHANNEL, "compute_reduction"
+                )
+                print(f"Published to {number_subscribers} subscribers")
+            except Exception as e:
+                print(f"Error publishing to Redis {e}")
 
         # else:
         #     reduction_flows = get_full_deployment_names()
