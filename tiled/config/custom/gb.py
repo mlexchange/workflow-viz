@@ -1,14 +1,15 @@
+import logging
+import os
+import pathlib
+from datetime import datetime
+from logging import StreamHandler
+
+import fabio
 import numpy as np
+from custom.edf import parse_txt_accompanying_edf
 from tiled.adapters.array import ArrayAdapter
 from tiled.structures.core import Spec
 from tiled.utils import path_from_uri
-from custom.edf import parse_txt_accompanying_edf
-import pathlib
-import os
-import logging
-from logging import StreamHandler
-import fabio
-from datetime import datetime
 
 logger = logging.getLogger("tiled.adapters.edf")
 logger.addHandler(StreamHandler())
@@ -35,20 +36,23 @@ def read(data_uri, structure=None, metadata=None, specs=None, access_policy=None
     array = data.reshape((pixels_y, pixels_x))
 
     additional_edf_metadata = parse_edf_accompanying_gb(filepath)
-    
-    # Combine the metadata dictionaries - the following method combines the 
+
+    # Combine the metadata dictionaries - the following method combines the
     # metadata dictionaries but there is a potential to overwrrite the values
     # for the same keys. If same keys are present in both dictionaries, then
     # an alternate method should be used to combine the dictionaries, similar to
     # the one used in the combine_edf_metadata_for_gb method.
-    metadata = {**metadata, **additional_edf_metadata} if metadata else additional_edf_metadata
+    metadata = (
+        {**metadata, **additional_edf_metadata} if metadata else additional_edf_metadata
+    )
 
     return ArrayAdapter.from_array(array, metadata=metadata, specs=[Spec("gb")])
+
 
 def combine_edf_metadata_for_gb(hi_dict, lo_dict):
     """Combine two dictionaries into one.
 
-    Take the metadata from both and if the same key is present in both, 
+    Take the metadata from both and if the same key is present in both,
     keep the values of both but index it with hi and lo
 
     Parameters
@@ -102,8 +106,9 @@ def parse_edf_accompanying_gb(file_path):
 
     # If the .txt file exists, the metadata is extracted from it
     # In case the .txt file does not exist:
-    #  - set the date as None,  
-    #  - An empty metadata dictionary is initilized (returned from parse_txt_accompanying_edf())
+    #  - set the date as None,
+    #  - An empty metadata dictionary is initilized (returned from
+    #                                   parse_txt_accompanying_edf())
     if not os.path.isfile(edf_hi_filepath):
         hi_date = None
     else:
@@ -111,7 +116,7 @@ def parse_edf_accompanying_gb(file_path):
         hi_header = hi_file.header
         hi_date_str = hi_header.get("Date")
         # Parse the string to convert to datetime object
-        hi_date = datetime.strptime(hi_date_str, '%a %b %d %H:%M:%S %Y')
+        hi_date = datetime.strptime(hi_date_str, "%a %b %d %H:%M:%S %Y")
         #  Combine the metadata dictionaries - from header and .txt file
         edf_hi_metadata_dict = {**edf_hi_metadata_dict, **hi_header}
 
@@ -123,30 +128,33 @@ def parse_edf_accompanying_gb(file_path):
         edf_lo_filepath = pathlib.Path(str(edf_lo_filepath).replace("sfloat", "lo"))
 
     edf_lo_metadata_dict = parse_txt_accompanying_edf(edf_lo_filepath)
-    
+
     # If the .txt file exists, the metadata is extracted from it
     # In case the .txt file does not exist:
-    #  - set the date as None,  
-    #  - An empty metadata dictionary is initilized (returned from parse_txt_accompanying_edf())
+    #  - set the date as None,
+    #  - An empty metadata dictionary is initilized (returned from
+    #                                   parse_txt_accompanying_edf())
     if not os.path.isfile(edf_lo_filepath):
         lo_date = None
-    else: 
+    else:
         lo_file = fabio.open(edf_lo_filepath)
         lo_header = lo_file.header
         lo_date_str = lo_header.get("Date")
         # Parse the string to convert to datetime object
-        lo_date = datetime.strptime(lo_date_str, '%a %b %d %H:%M:%S %Y')
+        lo_date = datetime.strptime(lo_date_str, "%a %b %d %H:%M:%S %Y")
         #  Combine the metadata dictionaries - from header and .txt file
         edf_lo_metadata_dict = {**edf_lo_metadata_dict, **lo_header}
 
     # Combine the metadata dictionaries
-    gb_dictionary = combine_edf_metadata_for_gb(edf_hi_metadata_dict, edf_lo_metadata_dict)
+    gb_dictionary = combine_edf_metadata_for_gb(
+        edf_hi_metadata_dict, edf_lo_metadata_dict
+    )
 
-    # Compare two dates and select the later one, but the string version for better readability
+    # Compare two dates and select the later one,
+    # but the string version for better readability
     if hi_date is not None and lo_date is not None:
         gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
     else:
         gb_dictionary["Date"] = hi_date if hi_date is not None else lo_date
 
     return gb_dictionary
-
