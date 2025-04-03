@@ -33,5 +33,64 @@
             ],
             "justMyCode": false,
         },
+        {
+            "name": "Debug Tiled Registration",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tiled",
+            "args": [
+                "register",
+                "${input:tiledUri}",
+                "--verbose",
+                "--api-key",
+                "${input:tiledApiKey}",
+                "--prefix",
+                "/raw",
+                "--ext",
+                ".cbf=application/x-cbf",
+                "--adapter",
+                "application/x-cbf=custom.cbf:read",
+                "--ext",
+                ".edf=application/x-edf",
+                "--adapter",
+                "application/x-edf=custom.edf:read",
+                "--ext",
+                ".gb=application/x-gb",
+                "--adapter",
+                "application/x-gb=custom.gb:read",
+                "--walker",
+                "custom.blacklist:walk",
+                "--walker",
+                "custom.whitelist:walk",
+                "--walker",
+                "custom.lambda_nxs:walk",
+                "--adapter",
+                "multipart/related;type=application/x-hdf5=custom.lambda_nxs:read_sequence",
+                "${input:tiledPathToRawData}"
+            ],
+            "justMyCode": false,
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/tiled/config/"
+            }
+        },
+    ],
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "tiledUri",
+            "description": "Specify the URI of the running Tiled server to register data with. Same as environment variable TILED_URI.",
+            "default": "http://localhost:8888"
+        },
+        {
+            "type": "promptString",
+            "id": "tiledApiKey",
+            "description": "Specify the API key for the Tiled server. Same as environment variable TILED_API_KEY.",
+        },
+        {
+            "type": "promptString",
+            "id": "tiledPathToRawData",
+            "description": "Specify the path to the raw data to register. Same as environment variable PATH_TO_RAW_DATA.",
+        }
     ]
 }
