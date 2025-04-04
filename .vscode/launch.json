@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug App",
+            "name": "Debug Frontend App",
             "type": "debugpy",
             "request": "launch",
             "module": "flask",
@@ -22,14 +22,14 @@
             "jinja": true
         },
         {
-            "name": "Debug Tiled",
+            "name": "Debug Tiled Serve",
             "type": "debugpy",
             "request": "launch",
             "module": "tiled",
             "args": [
                 "serve",
                 "config",
-                "./tiled/config/config_tmp.yml"
+                "./tiled/config/config.yml"
             ],
             "justMyCode": false,
         },
