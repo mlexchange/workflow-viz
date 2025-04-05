@@ -8,8 +8,8 @@ import h5py
 import numpy as np
 from tiled.adapters.array import ArrayAdapter
 from tiled.client.register import create_node_or_drop_collision, dict_or_none
-from tiled.server.schemas import Asset, DataSource, Management
-from tiled.utils import ensure_uri
+from tiled.structures.data_source import Asset, DataSource, Management
+from tiled.utils import ensure_uri, path_from_uri
 
 logger = logging.getLogger("tiled.adapters.lambda_nxs")
 logger.addHandler(StreamHandler())
@@ -84,8 +84,10 @@ async def walk(
         )
         adapter_class = settings.adapters_by_mimetype[mimetype]
         key = settings.key_from_filename(name)
+        # Sort the sequence by the file name as the order of the files may not be by id
+        sequence = sorted(sequence)
         try:
-            adapter = adapter_class(*sequence)
+            adapter = adapter_class([ensure_uri(filepath) for filepath in sequence])
         except Exception:
             logger.exception("    SKIPPED: Error constructing adapter for '%s'", name)
             return
@@ -99,14 +101,17 @@ async def walk(
                 DataSource(
                     mimetype=mimetype,
                     structure=dict_or_none(adapter.structure()),
+                    structure_family=adapter.structure_family,
                     parameters={},
                     management=Management.external,
                     assets=[
                         Asset(
-                            data_uri=str(ensure_uri(str(item.absolute()))),
+                            data_uri=ensure_uri(item),
                             is_directory=False,
+                            parameter="data_uris",
+                            num=i,
                         )
-                        for item in sorted(sequence)
+                        for i, item in enumerate(sequence)
                     ],
                 )
             ],
@@ -114,7 +119,8 @@ async def walk(
     return unhandled_files, unhandled_directories
 
 
-def read_sequence(*filepaths, metadata=None, **kwargs):
+def read_sequence(data_uris, metadata=None, **kwargs):
+    filepaths = [path_from_uri(uri) for uri in data_uris]
     # Stitch everything together
     num_modules = len(filepaths)
     dataset_path = "entry/instrument/detector/data"
