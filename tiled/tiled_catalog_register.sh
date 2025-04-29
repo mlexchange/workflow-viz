@@ -17,7 +17,7 @@ if [ -d "$PATH_TO_PROCESSED_DATA" ]; then
             --prefix "/processed" \
             "$PATH_TO_PROCESSED_DATA"
 else
-    echo "The directory for raw data ($PATH_TO_PROCESSED_DATA) does not exist."
+    echo "The directory for processed data ($PATH_TO_PROCESSED_DATA) does not exist."
 fi
 
 # Should no longer be needed since tiled serve comes first

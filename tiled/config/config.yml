@@ -42,4 +42,4 @@ uvicorn:
 authentication:
   # For local testing allow anonymous access
   allow_anonymous_access: true
-  single_user_api_key: $TILED_SINGLE_USER_API_KEY
+  single_user_api_key: $TILED_API_KEY
