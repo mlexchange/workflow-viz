@@ -1,4 +1,5 @@
 import os
+
 import typer
 
 app = typer.Typer()
@@ -6,7 +7,8 @@ app = typer.Typer()
 
 def sanitize_filename(filename: str) -> str:
     """
-    Replace all dots ('.') in the filename except for the last one with underscores ('_').
+    Replace all dots ('.') in the filename with underscores ('_').
+    The extension remains unchanged.
     """
     name, ext = os.path.splitext(filename)
     sanitized_name = name.replace(".", "_")
