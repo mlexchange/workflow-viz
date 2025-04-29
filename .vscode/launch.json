@@ -79,18 +79,18 @@
         {
             "type": "promptString",
             "id": "tiledUri",
-            "description": "Specify the URI of the running Tiled server to register data with. Same as environment variable TILED_URI.",
+            "description": "Specify the URI of the running Tiled server by copying the value for TILED_URI in .env without quotes.",
             "default": "http://localhost:8888"
         },
         {
             "type": "promptString",
             "id": "tiledApiKey",
-            "description": "Specify the API key for the Tiled server. Same as environment variable TILED_API_KEY.",
+            "description": "Specify the API key for the Tiled server by copying the value for TILED_API_KEY in .env without quotes."
         },
         {
             "type": "promptString",
             "id": "tiledPathToRawData",
-            "description": "Specify the path to the raw data to register. Same as environment variable PATH_TO_RAW_DATA.",
+            "description": "Specify the path to the raw data by copying the value for PATH_TO_RAW_DATA in .env without quotes."
         }
     ]
 }
