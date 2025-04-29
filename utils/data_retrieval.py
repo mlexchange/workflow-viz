@@ -85,49 +85,25 @@ def write_csv_from_interface(experiment_name, data):
         return None
 
 
-def get_scan_options():
+def get_scan_options(scans_client=None):
     """
     Returns a list of trimmed Tiled Uris for scans
     """
     scan_uri_map = dict()
-    raw_client = client["raw"]
 
-    # Iterate through all nodes in the raw client
-    for node_name in raw_client.keys():
-        # This assumes at least one folder in which scans are held
-        node_client = raw_client[node_name]
-        if isinstance(node_client, Container):
-            for key in node_client:
-                # Test if key contains detector name
-                if key == "lmbdp03" or key == "embl_2m":
-                    detector_client = node_client[key]
-                    for child_key in detector_client.keys():
-                        scan_uri = trim_base_from_uri(detector_client[child_key].uri)
-                        trimmed_scan_name = scan_uri.replace("raw/", "")
-                        scan_uri_map[trimmed_scan_name] = scan_uri
-                else:
-                    # Check if we find any scans that we can read, if not go deeper
-                    child_node_client = node_client[key]
-                    specs = child_node_client.specs
-                    if any(spec.name == "edf" or spec.name == "gb" for spec in specs):
-                        scan_uri = trim_base_from_uri(child_node_client.uri)
-                        trimmed_scan_name = scan_uri.replace("raw/", "")
-                        scan_uri_map[trimmed_scan_name] = scan_uri
-                    if isinstance(child_node_client, Container):
-                        for child_key in child_node_client.keys():
-                            grandchild_node_client = node_client[key]
-                            specs = grandchild_node_client.specs
-                            if any(
-                                spec.name == "edf" or spec.name == "gb"
-                                for spec in specs
-                            ):
-                                scan_uri = trim_base_from_uri(
-                                    grandchild_node_client[child_key].uri
-                                )
-                                trimmed_scan_name = scan_uri.replace("raw/", "")
-                                scan_uri_map[trimmed_scan_name] = scan_uri
-        else:
-            scan_uri = trim_base_from_uri(node_client.uri)
+    # If no scans_client is provided, use the "raw" container
+    if scans_client is None:
+        scans_client = client["raw"]
+
+    # Iterate through all nodes in the given scans_client
+    for item_name in scans_client.keys():
+        item = scans_client[item_name]
+        if isinstance(item, Container):
+            child_uri_map = get_scan_options(item)
+            scan_uri_map.update(child_uri_map)
+        # If item is an ArrayClient, trim the base uri and add to the map
+        elif isinstance(item, ArrayClient):
+            scan_uri = trim_base_from_uri(item.uri)
             trimmed_scan_name = scan_uri.replace("raw/", "")
             scan_uri_map[trimmed_scan_name] = scan_uri
 
