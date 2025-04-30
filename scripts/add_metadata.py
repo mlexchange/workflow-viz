@@ -1,3 +1,4 @@
+import difflib
 import os
 from typing import List, Optional
 
@@ -47,29 +48,43 @@ def traverse_and_update(
                 row = df[df[key_column] == key].iloc[0]
 
                 # Build metadata dictionary
-                update_data = (
+                new_metadata = (
                     {col: row[col] for col in metadata_columns if col in row}
                     if metadata_columns
                     else row.drop(labels=[key_column]).to_dict()
                 )
 
-                typer.echo(f"\nMatched Array: {prefix}/{key}")
-                typer.echo(f"Update data: {update_data}")
+                typer.echo(f"Matched Array: {prefix}/{key}")
+                typer.echo(f"New meta data: {new_metadata}")
 
                 if not dry_run:
                     # Retrieve the current metadata
                     current_metadata = item.metadata
-                    update_data = {
+                    new_metadata = {
                         **current_metadata,
-                        **update_data,
+                        **new_metadata,
                     }
                     # Update the item with the new metadata
-                    item.update_metadata(update_data)
+                    item.update_metadata(new_metadata)
                     typer.echo("Metadata updated.")
                 else:
                     typer.echo("[Dry Run] Metadata would be updated.")
 
                 updated_count["count"] += 1
+            else:
+                # If the key is not found in the DataFrame, log the closest match
+                candidates = df[key_column].astype(str).unique()
+                closest = difflib.get_close_matches(key, candidates, n=1)
+                if closest:
+                    typer.echo(
+                        f"No Match for '{prefix}/{key}' found in table, "
+                        + f"did you mean: '{closest[0]}'?"
+                    )
+                else:
+                    typer.echo(
+                        f"No Match for '{prefix}/{key}' found in table, "
+                        + "and no close matches found."
+                    )
 
         elif isinstance(item, Container):
             traverse_and_update(
@@ -86,10 +101,11 @@ def traverse_and_update(
 @app.command()
 def update_metadata_from_tiled_table(
     container_name: str = typer.Argument(
-        "raw", help="Name of root container, e.g., 'raw', 'processed'"
+        "raw", help="Name of root container, e.g., 'raw', 'processed' (default: raw)"
     ),
     trimmed_table_uri: str = typer.Argument(
-        ..., help="Trimmed Tiled URI to table with metadata"
+        ...,
+        help="Trimmed Tiled URI to table with metadata",
     ),
     key_column: str = typer.Argument(
         "Scan Key",
