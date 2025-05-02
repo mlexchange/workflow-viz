@@ -154,7 +154,11 @@ def parse_edf_accompanying_gb(file_path):
     # but the string version for better readability
     if hi_date is not None and lo_date is not None:
         gb_dictionary["Date"] = hi_date if hi_date > lo_date else lo_date
-    else:
-        gb_dictionary["Date"] = hi_date if hi_date is not None else lo_date
+    # If only one date is present, use that
+    elif hi_date is not None:
+        gb_dictionary["Date"] = hi_date
+    elif lo_date is not None:
+        gb_dictionary["Date"] = lo_date
+    # If no date is present, do not add it to the dictionary
 
     return gb_dictionary
