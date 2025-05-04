@@ -1,5 +1,6 @@
 import dash_mantine_components as dmc
 from dash import dcc, html
+from dash_iconify import DashIconify
 
 from utils.data_retrieval import get_mask_options, get_scan_options
 
@@ -18,8 +19,24 @@ def layout():
                     value=None,
                     placeholder="Select a calibration scan...",
                     searchable=True,
+                    limit=100,
                 ),
-                span=12,
+                span=11,
+            ),
+            dmc.Col(
+                dmc.ActionIcon(
+                    id="scan-list-refresh",
+                    children=[
+                        DashIconify(
+                            icon="mdi:refresh-circle",
+                            width=20,
+                        )
+                    ],
+                    variant="subtle",
+                    size="s",
+                    style={"marginTop": "35px"},
+                ),
+                span=1,
             ),
             dmc.Col(
                 dmc.Select(
