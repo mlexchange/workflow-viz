@@ -27,9 +27,23 @@ def interface_components():
         multi=True,
     )
 
-    select_column_button = dmc.Button(
-        id="select-column-button",
-        children="Select Column",
+    polymer_A_input = dmc.Select(
+        data=[],
+        placeholder="Select Polymer A",
+        id="polymer-A-dropdown",
+        style={"width": 250},
+    )
+
+    polymer_B_input = dmc.Select(
+        data=[],
+        placeholder="Select Polymer B",
+        id="polymer-B-dropdown",
+        style={"width": 250},
+    )
+
+    show_table_button = dmc.Button(
+        id="show_table-button",
+        children="Show Table",
         variant="filled",
         style={"width": 250},
     )
@@ -55,11 +69,18 @@ def interface_components():
             dmc.Space(h=8),
             select_experiment_button,
             dmc.Space(h=16),
-            html.Div(["Select uneditabl column names"]),
+            html.Div(["Select uneditable column names"]),
             dmc.Space(h=8),
             column_names_input,
             dmc.Space(h=8),
-            select_column_button,
+            html.Div(["Select Polymer A and B"]),
+            dmc.Space(h=8),
+            polymer_A_input,
+            dmc.Space(h=8),
+            polymer_B_input,
+            dmc.Space(h=8),
+            show_table_button,
+
         ],
     )
 

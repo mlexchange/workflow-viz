@@ -53,6 +53,7 @@ def get_csv_file_uri(experiment_name):
 def tiled_read_csv(csv_file_uri):
     try:
         client = from_uri(csv_file_uri, api_key=TILED_API_KEY)
+        #client.context.cache.clear()  # clear cache
         csv_data = client.read()
         return csv_data
     except Exception as e:
@@ -61,7 +62,7 @@ def tiled_read_csv(csv_file_uri):
         return None
 
 
-def write_csv_from_interface(experiment_name, data):
+def write_csv_from_interface(experiment_name, data, polymer_a, polymer_b):
     try:
         # TODO: optimize this with a get_csv_file_uri function later
         client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
@@ -71,18 +72,18 @@ def write_csv_from_interface(experiment_name, data):
             csv_client.data_sources()[0]["assets"][0]["data_uri"]
         )
         data.replace("", np.nan, inplace=True)
+
+        step_1_polymer_A, step_1_polymer_B = f"Step 1, {polymer_a}", f"Step 1, {polymer_b}"
+        Fraction_polymer_A, Fraction_polymer_B = f"Fraction {polymer_a}", f"Fraction {polymer_b}"
+
         data = data.astype(
             dtype={
-                "Step 1, 58k": float,
-                "Step 1, 34k": float,
+                step_1_polymer_A : float,
+                step_1_polymer_B: float,
                 "Swell ratio": float,
-                "Fraction 58k": float,
-                "Fraction 34k": float,
+                Fraction_polymer_A: float,
+                Fraction_polymer_B: float,
                 "Fraction Additive": float,
-                "Peak Position": float,
-                "Fwhm": float,
-                "domain spacing": float,
-                "grain size": float,
             }
         )
         data.to_csv(csv_file_local_uri, index=False, na_rep="None")

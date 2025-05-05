@@ -8,7 +8,7 @@ from utils.data_retrieval import (
     tiled_read_csv,
     write_csv_from_interface,
 )
-from utils.metadata_utils import calculate_ratios  # generate_next_scan_name
+from utils.metadata_utils import calculate_ratios, extract_polymer_names  # generate_next_scan_name
 
 
 # generating the list of experiments for the dropdown
@@ -24,6 +24,8 @@ def experiment_name_retrieval(search_value):
 
 @callback(
     Output(component_id="columns-name-dropdown", component_property="options"),
+    Output(component_id="polymer-A-dropdown", component_property="data"),
+    Output(component_id="polymer-B-dropdown", component_property="data"),
     Input(component_id="select-expt-button", component_property="n_clicks"),
     State(component_id="experiment-name-dropdown", component_property="value"),
     prevent_initial_call=True,
@@ -33,7 +35,31 @@ def column_name_retrieval(n_clicks, experiment_name):
         return []
     # Gets the table data from the Tiled csv node of the experiment name
     column_names_list = get_column_names(experiment_name)
-    return column_names_list
+
+    #populate the polymer A and B dropdowns
+    polymer_names = extract_polymer_names(column_names_list)
+    
+    return column_names_list, polymer_names, polymer_names
+
+@callback(
+        Output(component_id="polymer-A-dropdown", component_property="error"), 
+        Input(component_id="polymer-A-dropdown", component_property="value"),
+        State(component_id="polymer-B-dropdown", component_property="value"),
+        )
+def throw_error_polymer_A(value, polymer_B_value):
+    if not value or not polymer_B_value:
+        return ""  # No error if either value is empty
+    return "Cannot select same polymers" if value == polymer_B_value else ""
+
+@callback(
+        Output(component_id="polymer-B-dropdown", component_property="error"), 
+        Input(component_id="polymer-B-dropdown", component_property="value"),
+        State(component_id="polymer-A-dropdown", component_property="value"),
+        )
+def throw_error_polymer_B(value, polymer_A_value):
+    if not value or not polymer_A_value:
+        return ""  # No error if either value is empty
+    return "Cannot select same polymers" if value == polymer_A_value else ""
 
 
 @callback(
@@ -41,12 +67,12 @@ def column_name_retrieval(n_clicks, experiment_name):
         component_id="example-table", component_property="data", allow_duplicate=True
     ),
     Output(component_id="example-table", component_property="columns"),
-    Input(component_id="select-column-button", component_property="n_clicks"),
+    Input(component_id="show_table-button", component_property="n_clicks"),
     State(component_id="experiment-name-dropdown", component_property="value"),
     State(component_id="columns-name-dropdown", component_property="value"),
     prevent_initial_call=True,
 )
-def select_experiment(n_clicks, experiment_name, uneditable_column_names):
+def select_experiment(n_clicks, experiment_name, uneditable_column_names): 
     if experiment_name is None:
         return [], []
 
@@ -94,24 +120,30 @@ def add_row(n_clicks, table_data, columns):
     Output(component_id="example-table", component_property="data"),
     Input(component_id="example-table", component_property="data_timestamp"),
     State(component_id="example-table", component_property="data"),
+    State(component_id="polymer-A-dropdown", component_property="value"),
+    State(component_id="polymer-B-dropdown", component_property="value"),
     prevent_initial_call=True,
 )
-def calculate_table_ratios(timestamp, rows):
+def calculate_table_ratios(timestamp, rows, polymer_A_selected, polymer_B_selected):
     # This callback is used to update the table data when the table is edited
     # print("Calculating ratios")
+
+    step_1_polymer_A, step_1_polymer_B = f"Step 1, {polymer_A_selected}", f"Step 1, {polymer_B_selected}"
+    Fraction_polymer_A, Fraction_polymer_B = f"Fraction {polymer_A_selected}", f"Fraction {polymer_B_selected}"
+
     for row in rows:
         # Check if any of the required values are None
         if (
-            row["Step 1, 58k"] is not None
-            and row["Step 1, 34k"] is not None
-            and row["Swell ratio"] is not None
+            row[step_1_polymer_A] is not None and row[step_1_polymer_A]!=""
+            and row[step_1_polymer_B] is not None and row[step_1_polymer_B]!=""
+            and row["Swell ratio"] is not None and row["Swell ratio"]!=""
         ):
             (
-                row["Fraction 58k"],
-                row["Fraction 34k"],
+                row[Fraction_polymer_A],
+                row[Fraction_polymer_B],
                 row["Fraction Additive"],
             ) = calculate_ratios(
-                row["Step 1, 58k"], row["Step 1, 34k"], row["Swell ratio"]
+                row[step_1_polymer_A], row[step_1_polymer_B], row["Swell ratio"]
             )
     return rows
 
@@ -122,10 +154,12 @@ def calculate_table_ratios(timestamp, rows):
     State(component_id="experiment-name-dropdown", component_property="value"),
     State(component_id="example-table", component_property="data"),
     State(component_id="saved-popup", component_property="opened"),
+    State(component_id="polymer-A-dropdown", component_property="value"),
+    State(component_id="polymer-B-dropdown", component_property="value"),
     prevent_initial_call=True,
 )
-def save_data(n_clicks, experiment_name, table_data, opened):
-    write_csv_from_interface(experiment_name, pd.DataFrame(table_data))
+def save_data(n_clicks, experiment_name, table_data, opened, polymer_A_selected, polymer_B_selected):
+    write_csv_from_interface(experiment_name, pd.DataFrame(table_data), polymer_A_selected, polymer_B_selected)
     # send a call to the Tiled server to save the data
     # overwrite the csv on the file system
     return not opened

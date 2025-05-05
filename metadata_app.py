@@ -24,6 +24,8 @@ app.layout = html.Div(
         # ),
         interface_components(),
         table_modification_components(),
+        # dcc.Store(id="Polymer_A"),
+        # dcc.Store(id="Polymer_B"),
     ]
 )
 
