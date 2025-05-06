@@ -80,7 +80,6 @@ def interface_components():
             polymer_B_input,
             dmc.Space(h=8),
             show_table_button,
-
         ],
     )
 
