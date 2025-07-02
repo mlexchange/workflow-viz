@@ -59,7 +59,11 @@ services:
       - '8095:8095'
     networks:
       - workflow_viz_default
-
+  kvrocks:
+    ports:
+      - "6666:6666"
+    networks:
+      - workflow_viz_default
 networks:
   workflow_viz_default:
     external: true
