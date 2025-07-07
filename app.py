@@ -1,5 +1,9 @@
+import os
+
 import dash_mantine_components as dmc
 from dash import Dash, dcc, html
+
+from utils.redis import RedisConn
 
 try:
     import utils.data_retrieval
@@ -27,10 +31,27 @@ from components.progress import layout as progress_layout
 from components.reduction import layout as reduction_layout
 from components.scan import layout as scan_layout
 
+# Configurable host and port to suport containerization,
+# which needs to attach to 0.0.0.0
+FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
+FLASK_PORT = os.getenv("FLASK_PORT", 8095)
+
+# Configure dash to listen to a specific pathname prefix,
+# great for being served behind a reverse proxy
+PATHNAME_PREFIX = os.getenv("REQUEST_PATHNAME_PREFIX", "/")
+
+redis_conn = None
 # Initialize the Dash app
-app = Dash(__name__)
+app = Dash(
+    __name__,
+    requests_pathname_prefix=PATHNAME_PREFIX,
+    routes_pathname_prefix=PATHNAME_PREFIX,
+)
 app.title = "Workflow Configuration"
 application = app.server
+
+
+redis_conn = RedisConn.from_env()
 
 
 app.layout = dmc.MantineProvider(
@@ -61,4 +82,8 @@ app.layout = dmc.MantineProvider(
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port="8095")
+    app.run(
+        debug=True,
+        host=FLASK_HOST,
+        port=FLASK_PORT,
+    )
