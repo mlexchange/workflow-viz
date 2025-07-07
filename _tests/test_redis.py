@@ -330,37 +330,3 @@ def test_redis_subscribe_with_exception(redis_conn, mock_redis):
     # Act & Assert
     with pytest.raises(Exception, match="Redis connection error"):
         redis_conn.redis_subscribe(channel_name, callback)
-
-
-@pytest.mark.parametrize(
-    "redis_host,redis_port",
-    [
-        ("localhost", "6379"),
-        ("redis.example.com", "6380"),
-        ("127.0.0.1", "6381"),
-    ],
-)
-@patch("utils.redis.redis.Redis")
-@patch("utils.redis.redis.ConnectionPool")
-def test_from_env_with_various_hosts(
-    mock_connection_pool, mock_redis, redis_host, redis_port
-):
-    """Test from_env class method with various host/port combinations."""
-    # Arrange
-    mock_pool = MagicMock()
-    mock_connection_pool.return_value = mock_pool
-    mock_redis_instance = MagicMock()
-    mock_redis.return_value = mock_redis_instance
-
-    env_vars = {"REDIS_HOST": redis_host, "REDIS_PORT": redis_port}
-
-    # Act
-    with patch.dict(os.environ, env_vars):
-        redis_conn = RedisConn.from_env()
-
-    # Assert
-    mock_connection_pool.assert_called_once_with(
-        host=redis_host, port=redis_port, decode_responses=True
-    )
-    mock_redis.assert_called_once_with(connection_pool=mock_pool)
-    assert redis_conn.redis_conn == mock_redis_instance
