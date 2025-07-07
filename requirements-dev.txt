@@ -7,3 +7,4 @@ nbstripout
 pre-commit
 pre-commit-hooks
 pytest
+pytest-pythonpath

@@ -41,6 +41,26 @@ class RedisConn:
                 if message["channel"] == channel_name:
                     callback(message["data"])
 
+    def schedule_job(function_name: str, parameters: dict) -> str:
+        """
+        Schedules a job with the given function name and parameters.
+        Returns the job ID.
+        """
+        # This is a placeholder for actual job scheduling logic
+        # In a real implementation, you would integrate with a job scheduler
+        # like Prefect or Arroyo here.
+        raise NotImplementedError("Job scheduling not implemented.")
+
+    def check_status(job_id: str) -> str:
+        """
+        Checks the status of a scheduled job with the given ID.
+        Returns the job status.
+        """
+        # This is a placeholder for actual job status checking logic
+        # In a real implementation, you would integrate with a job scheduler
+        # like Prefect or Arroyo here.
+        raise NotImplementedError("Job status checking not implemented.")
+
     @classmethod
     def from_settings(cls, settings: dict) -> "RedisConn":
         pool = redis.ConnectionPool(
