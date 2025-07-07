@@ -17,3 +17,4 @@ gunicorn
 typer
 dash-extensions==1.0.7
 tiled-viewer==0.0.7
+redis
