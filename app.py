@@ -19,6 +19,7 @@ from callbacks.controls_reduction import *
 from callbacks.progress import *
 from callbacks.reduction import *
 from callbacks.scan import *
+from callbacks.tiled_viewer import *  # Add this line
 from components.config_loader import layout as config_layout
 from components.controls_calibration import layout as controls_calibration_layout
 from components.controls_reduction import layout as controls_reduction_layout
