@@ -1,10 +1,13 @@
 #!/bin/bash
 source .env
+export PATH_TO_RAW_DATA="/data/raw"
 echo "Executing Folder: $PWD"
 export PYTHONPATH="$PYTHONPATH:$PWD/tiled/config/"
 echo "Python Path: $PYTHONPATH"
 echo "Data catalog for raw data: $PATH_TO_RAW_DATA_CATALOG"
 echo "Data catalog for processed data: $PATH_TO_PROCESSED_DATA_CATALOG"
+echo "Raw data path: $PATH_TO_RAW_DATA"
+echo "Processed data path: $PATH_TO_PROCESSED_DATA"
 
 # Should no longer be needed since tiled serve comes first
 if [[ ! -f "$PATH_TO_PROCESSED_DATA_CATALOG" ]]; then

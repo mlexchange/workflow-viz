@@ -82,6 +82,12 @@ app.layout = dmc.MantineProvider(
 
 
 if __name__ == "__main__":
+    print(
+        (
+            f"Starting Dash app on {FLASK_HOST}:{FLASK_PORT} "
+            f"with pathname prefix '{PATHNAME_PREFIX}'"
+        )
+    )
     app.run(
         debug=True,
         host=FLASK_HOST,

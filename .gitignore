@@ -171,4 +171,4 @@ Thumbs.db
 *.db-shm
 *.db-wal
 tiled/config/config_tmp.yml
-dataset/
+docker-compose.override.yml

@@ -35,7 +35,7 @@ trees:
 
 
 uvicorn:
-  host: 127.0.0.1
+  host: $UVICORN_HOST
   port: 8888
 
 

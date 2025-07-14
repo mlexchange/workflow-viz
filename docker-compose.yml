@@ -1,17 +1,19 @@
 # docker-compose.yml
-
-version: "3"
 services:
   tiled:
-    image: ghcr.io/bluesky/tiled:0.1.0-b17
+    # image: ghcr.io/bluesky/tiled:0.1.0-b17
+    build:
+      context: ./tiled
+      dockerfile: Dockerfile
     container_name: tiled_workflow_server
-    command: bash -c "/app/tiled/tiled_config_serve.sh"
+    command: bash -c "/app/tiled/tiled_config_serve_container.sh"
     volumes:
       - ./tiled:/app/tiled
       #- desy-drive:/data
       - .env:/deploy/.env
       - ${PATH_TO_RAW_DATA}:/data
     environment:
+      PATH_TO_RAW_DATA: ${PATH_TO_RAW_DATA}
       TILED_API_KEY: ${TILED_API_KEY}
       PATH_TO_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
     depends_on:
@@ -29,21 +31,24 @@ services:
     command: bash -c "/app/tiled/tiled_catalog_register.sh"
     volumes:
       - ./tiled:/app/tiled
-      - .env:/app/.env
+      # - .env:/app/.env
       #- data-drive:/data
-      - ${PATH_TO_RAW_DATA}:/data/raw
-      - ${PATH_TO_PROCESSED_DATA}:/data/processed
+      - /Users/dylanmcreynolds/data/tiled/raw:/data/raw
+      - /Users/dylanmcreynolds/data/tiled/processed:/data/processed
     environment:
       PATH_TO_RAW_DATA: "/data/raw"
       PATH_TO_RAW_DATA_CATALOG: "/app/tiled/db/catalog_docker.db"
       PATH_TO_PROCESSED_DATA: "/data/processed"
       PATH_TO_PROCESSED_DATA_CATALOG: "/app/tiled/db/catalog_processed_docker.db"
+      
     networks:
       - workflow_viz_default
 
   workflow-viz:
     image: workflow_viz
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: workflow_viz
     command: 'python app.py'
     environment:
@@ -60,6 +65,7 @@ services:
     networks:
       - workflow_viz_default
   kvrocks:
+    image: kvrocks/kvrocks:latest
     ports:
       - "6666:6666"
     networks:

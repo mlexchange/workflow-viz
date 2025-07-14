@@ -153,7 +153,11 @@ def get_mask_options():
     # if that is the case, the logic here would not yet be needed,
     # but they may not be in the future
     raw_client = client["processed"]
-    masks = raw_client["masks"]
+    if raw_client.get("masks") is None:
+        print("No masks found in the processed data.")
+        return {}
+    else:
+        masks = raw_client["masks"]
     mask_uri_mapper = dict()
     for mask_name in masks.keys():
         mask_client = masks[mask_name]
