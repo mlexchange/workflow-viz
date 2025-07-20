@@ -55,6 +55,8 @@ services:
       TILED_API_KEY: ${TILED_API_KEY}
       TILED_URI: "http://tiled:8888"
       PREFECT_API_URL: "http://prefect-server:4200/api"
+      FLASK_HOST: 0.0.0.0
+      FLASK_PORT: 8095
     volumes:
       - ./app.py:/app/app.py
       - ./callbacks:/app/callbacks
