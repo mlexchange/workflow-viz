@@ -1,7 +1,16 @@
+from enum import Enum
 import json
 import os
+from uuid import uuid
 
 import redis as redis
+
+JOB_KEY_PREFIX = "job:"
+
+class JobStatus(Enum):
+    PENDING = "pending"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class RedisConn:
@@ -41,25 +50,26 @@ class RedisConn:
                 if message["channel"] == channel_name:
                     callback(message["data"])
 
-    def schedule_job(function_name: str, parameters: dict) -> str:
-        """
-        Schedules a job with the given function name and parameters.
-        Returns the job ID.
-        """
-        # This is a placeholder for actual job scheduling logic
-        # In a real implementation, you would integrate with a job scheduler
-        # like Prefect or Arroyo here.
-        raise NotImplementedError("Job scheduling not implemented.")
+    def schedule_job(self, function_name: str, parameters: dict) -> str:
+        
+        # create a unique job ID
+        job_id = f"{JOB_KEY_PREFIX}{function_name}:{uuid.uuid4()}"
+        # Store the job parameters in Redis
+        self.set_json(job_id, parameters)
+        # Publish the job to a Redis channel for processing
+        self.redis_conn.publish(
+            "job_queue",
+            json.dumps({
+                "job_id": job_id,
+                "function_name": function_name,
+                "parameters": parameters,
+                "status": JobStatus.PENDING.value
+            }),
+        )
+        return job_id
 
-    def check_status(job_id: str) -> str:
-        """
-        Checks the status of a scheduled job with the given ID.
-        Returns the job status.
-        """
-        # This is a placeholder for actual job status checking logic
-        # In a real implementation, you would integrate with a job scheduler
-        # like Prefect or Arroyo here.
-        raise NotImplementedError("Job status checking not implemented.")
+    def check_status(self, job_id: str) -> str:
+        return self.get_json(job_id).get("status", "unknown")
 
     @classmethod
     def from_settings(cls, settings: dict) -> "RedisConn":
