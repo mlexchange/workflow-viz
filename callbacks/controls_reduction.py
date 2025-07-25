@@ -7,10 +7,8 @@ from utils.prefect import get_full_deployment_names, schedule_prefect_flow
     Output("prefect-flow-run", "data"),
     Output("compute-reduction-button", "loading"),
     Input("compute-reduction-button", "n_clicks"),
-    State("scan-name", "value"),
-    State("scan-name-uri-map", "data"),
-    State("mask-name", "value"),
-    State("mask-name-uri-map", "data"),
+    State("scan-uri-input", "value"),
+    State("mask-uri-input", "value"),
     State("experiment-type", "value"),
     State("beamcenter-x", "value"),
     State("beamcenter-y", "value"),
@@ -33,10 +31,8 @@ from utils.prefect import get_full_deployment_names, schedule_prefect_flow
 )
 def submit_reduction_to_compute(
     n_clicks,
-    scan_name,
-    scan_name_uri_mapper,
-    mask_name,
-    mask_name_uri_mapper,
+    scan_uri,
+    mask_uri,
     experiment_type,
     beamcenter_x,
     beamcenter_y,
@@ -57,8 +53,7 @@ def submit_reduction_to_compute(
     horizontal_cut_x_max,
 ):
     if n_clicks:
-        scan_uri = scan_name_uri_mapper[scan_name]
-        mask_uri = mask_name_uri_mapper[mask_name]
+        # No need for URI lookup - directly use the URIs from the input fields
         parameters_calibration = {
             "input_uri_data": scan_uri,
             "input_uri_mask": mask_uri,

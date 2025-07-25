@@ -43,3 +43,11 @@ authentication:
   # For local testing allow anonymous access
   allow_anonymous_access: true
   single_user_api_key: $TILED_API_KEY
+
+allow_origins:
+  - http://127.0.0.1:8050
+  - http://localhost:8050
+  - http://127.0.0.1:8095
+  - http://localhost:8095
+
+

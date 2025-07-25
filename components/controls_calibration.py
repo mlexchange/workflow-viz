@@ -1,25 +1,36 @@
 import dash_mantine_components as dmc
 from dash import dcc, html
+import tiled_viewer  # Import the TiledViewer component
+import os
 
-from utils.data_retrieval import get_mask_options, get_scan_options
-
+# Get API key from environment variable if needed
+# TILED_API_KEY = os.getenv("TILED_API_KEY")
+TILED_URI = os.getenv("TILED_URI", "http://127.0.0.1:8888")
 
 def layout():
-    scans_available = get_scan_options()
-    masks_available = get_mask_options()
 
     scan_mask_selection = dmc.Grid(
         children=[
+            # Scan selection with TiledViewer only
             dmc.Col(
-                dmc.Select(
-                    label="Scan",
-                    id="scan-name",
-                    data=list(scans_available.keys()),
-                    value=None,
-                    placeholder="Select a calibration scan...",
-                ),
+                html.Div([
+                    dmc.Text("Scan"),
+                    # TiledViewer component for scan selection
+                    tiled_viewer.TiledViewer(
+                        id='scan-selector',
+                        tiledBaseUrl=f"{TILED_URI}/api/v1",
+                        isPopup=True,
+                        isButtonMode=True,
+                    ),
+                    # Hidden input field to store the selected scan URI
+                    dmc.TextInput(
+                        id="scan-uri-input",
+                        style={"display": "none"},  # Hide it with CSS
+                    ),
+                ]),
                 span=12,
             ),
+            # Experiment type selection (unchanged)
             dmc.Col(
                 dmc.Select(
                     label="Experiment",
@@ -30,18 +41,25 @@ def layout():
                 ),
                 span=3,
             ),
+            # Mask selection with TiledViewer only
             dmc.Col(
-                dmc.Select(
-                    label="Mask",
-                    id="mask-name",
-                    data=list(masks_available.keys()),
-                    value=None,
-                    placeholder="Select a mask...",
-                ),
+                html.Div([
+                    dmc.Text("Mask"),
+                    # TiledViewer component for mask selection
+                    tiled_viewer.TiledViewer(
+                        id='mask-selector',
+                        tiledBaseUrl=f"{TILED_URI}/api/v1",
+                        isPopup=True,
+                        isButtonMode=True,
+                    ),
+                    # Hidden input field to store the selected mask URI
+                    dmc.TextInput(
+                        id="mask-uri-input",
+                        style={"display": "none"},  # Hide it with CSS
+                    ),
+                ]),
                 span=9,
             ),
-            dcc.Store(id="scan-name-uri-map", data=scans_available),
-            dcc.Store(id="mask-name-uri-map", data=masks_available),
             dmc.Space(h=20),
         ]
     )

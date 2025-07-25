@@ -1,4 +1,4 @@
-# import plotly.express as px
+# import dash
 import numpy as np
 import plotly.graph_objects as go
 from dash import Input, Output, Patch, State, callback, ctx, no_update
@@ -12,15 +12,12 @@ from utils.data_retrieval import get_mask_data, get_scan_data
 @callback(
     Output("scan-viewer", "figure", allow_duplicate=True),
     Output("scan-dims", "data"),
-    Input("scan-name", "value"),
-    Input("mask-name", "value"),
-    State("scan-name-uri-map", "data"),
-    State("mask-name-uri-map", "data"),
+    Input("scan-uri-input", "value"),
+    Input("mask-uri-input", "value"),
     prevent_initial_call=True,
 )
-def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
-    if scan_name:
-        scan_uri = scan_name_uri_map[scan_name]
+def update_scan(scan_uri, mask_uri):
+    if scan_uri:
         scan_data = get_scan_data(scan_uri)
         scan_width = scan_data.shape[1]
         scan_height = scan_data.shape[0]
@@ -33,10 +30,9 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
     else:
         scan_height = 1679
         scan_width = 1475
-        # data = generate_zeros(width=scan_width, height=scan_height)
         figure = go.Figure(go.Scatter(x=[], y=[]))
-    if mask_name:
-        mask_uri = mask_name_uri_map[mask_name]
+    
+    if mask_uri:
         mask_data = get_mask_data(
             mask_uri, scan_height=scan_height, scan_width=scan_width
         )
@@ -57,6 +53,7 @@ def upate_scan(scan_name, mask_name, scan_name_uri_map, mask_name_uri_map):
                 )
             )
             figure["data"][1]["opacity"] = 1 / 2
+    
     figure["layout"]["yaxis"]["autorange"] = "reversed"
     return figure, {"width": scan_width, "height": scan_height}
 
