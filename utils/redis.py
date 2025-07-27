@@ -1,7 +1,7 @@
 from enum import Enum
 import json
 import os
-from uuid import uuid
+import uuid
 
 import redis as redis
 
