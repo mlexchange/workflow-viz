@@ -16,4 +16,4 @@ tiled[all]==0.1.0a116
 gunicorn
 typer
 dash-extensions==1.0.7
-tiled-viewer==0.0.5
+tiled-viewer==0.0.7
