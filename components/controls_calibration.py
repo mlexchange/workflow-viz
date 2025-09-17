@@ -18,9 +18,12 @@ def layout():
                     # TiledViewer component for scan selection
                     tiled_viewer.TiledViewer(
                         id='scan-selector',
-                        tiledBaseUrl=f"{TILED_URI}/api/v1",
+                        tiledBaseUrl=f"https://tiled.localhost/api/v1",
                         isPopup=True,
                         isButtonMode=True,
+                        buttonModeText="Select Calibration Scan",
+                        inButtonModeShowSelectedData=True
+
                     ),
                     # Hidden input field to store the selected scan URI
                     dmc.TextInput(
@@ -51,6 +54,8 @@ def layout():
                         tiledBaseUrl=f"{TILED_URI}/api/v1",
                         isPopup=True,
                         isButtonMode=True,
+                        buttonModeText="Select Mask",
+                        inButtonModeShowSelectedData=True
                     ),
                     # Hidden input field to store the selected mask URI
                     dmc.TextInput(
