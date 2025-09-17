@@ -18,7 +18,7 @@ def layout():
                     # TiledViewer component for scan selection
                     tiled_viewer.TiledViewer(
                         id='scan-selector',
-                        tiledBaseUrl=f"https://tiled.localhost/api/v1",
+                        tiledBaseUrl=f"{TILED_URI}/api/v1",
                         isPopup=True,
                         isButtonMode=True,
                         buttonModeText="Select Calibration Scan",
