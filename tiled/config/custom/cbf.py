@@ -12,6 +12,18 @@ logger.addHandler(StreamHandler())
 logger.setLevel("INFO")
 
 
+def parse_fio_accompanying_cbf(filepath):
+    """Parse the FIO accompanying CBF file and extract relevant information.
+
+    Parameters
+    ----------
+    filepath: str or pathlib.Path
+        Filepath of the .cbf file.
+    """
+    # Implement parsing logic here
+    pass
+
+
 def read(data_uri, structure=None, metadata=None, specs=None, access_policy=None):
     """Read a detector image saved as .cbf produced by a Pilatus detector.
 
