@@ -103,7 +103,7 @@ def get_column_names(experiment_name):
     client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
     csv_client = client["processed"][experiment_name][experiment_name]
     # Column names have to be initialized properly when the csv file is created
-    return csv_client.data_sources()[0]["structure"]["columns"]
+    return csv_client.columns
 
 
 def get_scan_options():
