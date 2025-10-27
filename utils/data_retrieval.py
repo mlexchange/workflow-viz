@@ -7,6 +7,10 @@ from tiled.client.array import ArrayClient
 from tiled.client.container import Container
 from tiled.utils import path_from_uri
 
+import pandas as pd
+# setting to avoid issues when converting NaN to empty strings
+pd.set_option('future.no_silent_downcasting', True)
+
 # from tiled.client.cache import Cache
 
 load_dotenv()
@@ -69,7 +73,7 @@ def write_csv_from_interface(experiment_name, data, polymer_a, polymer_b):
         container_client = client["processed"][experiment_name]
         csv_client = container_client[experiment_name]
         csv_file_local_uri = path_from_uri(
-            csv_client.data_sources()[0]["assets"][0]["data_uri"]
+            csv_client.data_sources()[0].assets[0].data_uri
         )
         data.replace("", np.nan, inplace=True)
 
