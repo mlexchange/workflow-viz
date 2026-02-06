@@ -1,10 +1,8 @@
 # Workflow Setup Visualization Prototype
 
-A Plotly Dash–based web interface for **interactive configuration and validation** of data-reduction and feature-extraction workflows for SAXS/WAXS experiments.
+A Plotly Dash–based web interface for interactive configuration and validation of data-reduction and feature-extraction workflows for SAXS/WAXS experiments.
 
-The interface supports validation of calibration and reduction parameters, inspection of intermediate results, and connectivity checks between infrastructure components **prior to near–real-time processing or autonomous operation**. It does not perform data acquisition or beamline control.
-
----
+The interface supports validation of calibration and reduction parameters, inspection of intermediate results, and connectivity checks between infrastructure components prior to near–real-time processing or autonomous operation. It does not perform data acquisition or beamline control.
 
 ## Software architecture
 
@@ -18,8 +16,6 @@ Users interactively configure calibration and reduction parameters, trigger work
 Algorithmic details and task-level implementations are intentionally maintained in the workflow repository to keep this interface focused on visualization, validation, and configuration.
 
 ![Calibration and detector setup](docs/workflowviz_calib_parameters.png)
-
----
 
 ## Configuration import and export
 
@@ -39,9 +35,9 @@ Example:
 }
 ```
 
----
+![Example reduced scattering profile](docs/workflowviz_reduction_view.png)
 
-## Initial setup: Clone the repository, create an environment, activate the environment, with venv
+## Initial Setup: Clone the repository, create an environment, activate the environment, with venv
 
 Clone the repository:
 
@@ -70,7 +66,7 @@ and install the requirements:
 pip install -r requirements.txt
 ```
 
-## Initial + beamtime setup: Set correct paths
+## Initial + Beamtime Setup: Set correct paths
 
 Copy `.env.example` to `.env`, then update the values:
 
@@ -85,7 +81,7 @@ If `TILED_WHITELIST` is empty, no files/directories will be skipped, but if it i
 
 All entries in `TILED_BLACKLIST` cause any directory or file containing a substring of the listed entries to be skipped.
 
-## Beamtime setup: Start up a Tiled
+## Beamtime Setup: Start up a Tiled
 
 Within two separate processes, start the Tiled server
 
@@ -101,21 +97,20 @@ tiled/tiled_catalog_register.sh
 
 ## Beamtime Setup: Start up a Prefect with Reduction Flows
 
-Follow the setup instructions in `SAXSWAXS_workflows`(<https://github.com/als-computing/SAXSWAXS-workflows>) to:
+Follow the setup instructions in SAXSWAXS_workflows (<https://github.com/als-computing/SAXSWAXS-workflows>) to:
 
 - Start a Prefect server
 - Deploy/register the SAXS/WAXS reduction flows
 - Start a Prefect worker
 
-## Beamtime setup: Start up the Dash application
+## Beamtime Setup: Start up the Dash application
 
 ```bash
 python app.py
 ```
 
-If data in Tiled is available and Prefect is configured correctly, data can be selected an reduced according to the experiment type.
-
-The current default reduction type is azimuthal integration for transmission experiments (small-angle-scattering (SAXS)) and (wide-angle-scattering (WAXS)), and a line-cut for grazing-incidence.
+If data are available in Tiled and Prefect is configured correctly, datasets can be selected and processed
+through the interface.
 
 # Copyright
 
