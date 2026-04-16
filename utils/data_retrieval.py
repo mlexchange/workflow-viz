@@ -102,6 +102,37 @@ def write_csv_from_interface(experiment_name, data, polymer_a, polymer_b):
         print(error_message)
         return None
 
+def write_phase_mapping_csv_from_interface(experiment_name, data):
+    """
+    Write Phase Mapping experiment data to a CSV file via Tiled.
+    """
+    try:
+        client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)
+        container_client = client["processed"][experiment_name]
+        csv_client = container_client[experiment_name]
+        csv_file_local_uri = path_from_uri(
+            csv_client.data_sources()[0].assets[0].data_uri
+        )
+        data.replace("", np.nan, inplace=True)
+
+        float_columns = [
+            "Fraction IS2VP99",
+            "Fraction PS4",
+            "Fraction P2VP4",
+            "Swell ratio",
+            "Peak 1 Position", "Peak 1 Fwhm",
+            "Peak 2 Position", "Peak 2 Fwhm",
+            "Peak 3 Position", "Peak 3 Fwhm",
+            "Peak 4 Position", "Peak 4 Fwhm",
+            "q2/q1 ratio",
+            "q3/q1 ratio",
+            "q4/q1 ratio",
+        ]
+        data = data.astype(dtype={col: float for col in float_columns})
+        data.to_csv(csv_file_local_uri, index=False, na_rep="None")
+    except Exception as e:
+        print(f"Error writing phase mapping csv: {e}")
+        return None
 
 def get_column_names(experiment_name):
     client = from_uri(TILED_URI, api_key=TILED_API_KEY, include_data_sources=True)

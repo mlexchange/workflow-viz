@@ -7,6 +7,7 @@ from utils.data_retrieval import (
     get_processed_experiment_names,
     tiled_read_csv,
     write_csv_from_interface,
+    write_phase_mapping_csv_from_interface,
 )
 from utils.metadata_utils import (  # generate_next_scan_name
     calculate_ratios,
@@ -174,6 +175,7 @@ def calculate_table_ratios(timestamp, rows, polymer_A_selected, polymer_B_select
     State(component_id="saved-popup", component_property="opened"),
     State(component_id="polymer-A-dropdown", component_property="value"),
     State(component_id="polymer-B-dropdown", component_property="value"),
+    State(component_id="experiment-type-dropdown", component_property="value"),
     prevent_initial_call=True,
 )
 def save_data(
@@ -183,13 +185,20 @@ def save_data(
     opened,
     polymer_A_selected,
     polymer_B_selected,
+    experiment_type,
 ):
-    write_csv_from_interface(
-        experiment_name,
-        pd.DataFrame(table_data),
-        polymer_A_selected,
-        polymer_B_selected,
-    )
+    if experiment_type == "phase mapping":
+        write_phase_mapping_csv_from_interface(
+            experiment_name,
+            pd.DataFrame(table_data),
+        )
+    else:
+        write_csv_from_interface(
+            experiment_name,
+            pd.DataFrame(table_data),
+            polymer_A_selected,
+            polymer_B_selected,
+        )
     # send a call to the Tiled server to save the data
     # overwrite the csv on the file system
     return not opened
