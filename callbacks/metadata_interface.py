@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Input, Output, State, callback
+from dash import Input, Output, State, callback, PreventUpdate
 
 from utils.data_retrieval import (
     get_column_names,
@@ -122,16 +122,20 @@ def add_row(n_clicks, table_data, columns):
 
 
 @callback(
-    Output(component_id="example-table", component_property="data"),
+    Output(component_id="example-table", component_property="data", allow_duplicate=True),
     Input(component_id="example-table", component_property="data_timestamp"),
     State(component_id="example-table", component_property="data"),
     State(component_id="polymer-A-dropdown", component_property="value"),
     State(component_id="polymer-B-dropdown", component_property="value"),
+    State(component_id="experiment-type-dropdown", component_property="value"), 
     prevent_initial_call=True,
 )
-def calculate_table_ratios(timestamp, rows, polymer_A_selected, polymer_B_selected):
+def calculate_table_ratios(timestamp, rows, polymer_A_selected, polymer_B_selected, experiment_type):
     # This callback is used to update the table data when the table is edited
     # print("Calculating ratios")
+
+    if experiment_type != "blend optimization":
+        return PreventUpdate # TODO: return rows if on older dash
 
     step_1_polymer_A, step_1_polymer_B = (
         f"Step 1, {polymer_A_selected}",
@@ -219,3 +223,51 @@ def toggle_polymer_selection(experiment_type):
     if experiment_type == "blend optimization":
         return {"display": "block"}
     return {"display": "none"}
+
+@callback(
+    Output(component_id="example-table", component_property="data", allow_duplicate=True),
+    Input(component_id="example-table", component_property="data_timestamp"),
+    State(component_id="example-table", component_property="data"),
+    State(component_id="experiment-type-dropdown", component_property="value"),
+    prevent_initial_call=True,
+)
+def calculate_phase_mapping_values(
+    timestamp,
+    rows,
+    experiment_type,
+):
+    """Calculate q-ratios and phase category for Phase Mapping experiment rows.
+
+    """
+    if experiment_type != "phase mapping":
+        raise PreventUpdate # TODO: return rows if on older dash
+
+    for row in rows:
+        peak_1 = row.get("Peak 1 Position")
+        if peak_1 is None or peak_1 == "":
+            continue
+
+        try:
+            q1 = float(peak_1)
+        except ValueError:
+            continue
+
+        if q1 == 0:
+            continue
+
+        for peak_n, ratio_col in [
+            ("Peak 2 Position", "q2/q1 ratio"),
+            ("Peak 3 Position", "q3/q1 ratio"),
+            ("Peak 4 Position", "q4/q1 ratio"),
+        ]:
+            val = row.get(peak_n)
+            if val is not None and val != "":
+                try:
+                    row[ratio_col] = round(float(val) / q1, 4)
+                except ValueError:
+                    pass
+
+        # Phase Category logic function in a function in utils/metadata_utils.py
+        row["Phase Category"] = ""
+
+    return rows
