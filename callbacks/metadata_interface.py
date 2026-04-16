@@ -208,3 +208,14 @@ def refresh_data(n_clicks, experiment_name):
     # The conversion to dictionary is necessary to avoid a non-JSON serializable error
     metadata_table = metadata_table.to_dict("records")
     return metadata_table
+
+@callback(
+    Output(component_id="polymer-selection-section", component_property="style"),
+    Input(component_id="experiment-type-dropdown", component_property="value"),
+)
+def toggle_polymer_selection(experiment_type):
+    """Toggle visibility of polymer A/B dropdowns based on experiment type.
+    """
+    if experiment_type == "blend optimization":
+        return {"display": "block"}
+    return {"display": "none"}

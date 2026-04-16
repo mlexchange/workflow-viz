@@ -5,6 +5,16 @@ from dash import dash_table, dcc, html
 
 
 def interface_components():
+    experiment_type_input = dcc.Dropdown(
+        options=[
+            {"label": "Phase Mapping", "value": "phase mapping"},
+            {"label": "Polymer blend optimization", "value": "blend optimization"},
+        ],
+        placeholder="Select experiment type",
+        id="experiment-type-dropdown",
+        style={"width": 250},
+    )
+
     experiment_name_input = dcc.Dropdown(
         options=[],
         placeholder="Select an experiment",
@@ -63,6 +73,9 @@ def interface_components():
     # )
     stack = html.Div(
         children=[
+            html.Div(["Experiment type"]),
+            dmc.Space(h=8),
+            experiment_type_input,
             html.Div(["Experiment name"]),
             dmc.Space(h=8),
             experiment_name_input,
@@ -73,12 +86,17 @@ def interface_components():
             dmc.Space(h=8),
             column_names_input,
             dmc.Space(h=8),
-            html.Div(["Select Polymer A and B"]),
-            dmc.Space(h=8),
-            polymer_A_input,
-            dmc.Space(h=8),
-            polymer_B_input,
-            dmc.Space(h=8),
+            html.Div(
+                id="polymer-selection-section",
+                children=[
+                    html.Div(["Select Polymer A and B"]),
+                    dmc.Space(h=8),
+                    polymer_A_input,
+                    dmc.Space(h=8),
+                    polymer_B_input,
+                    dmc.Space(h=8),
+                ],
+            ),
             show_table_button,
         ],
     )
